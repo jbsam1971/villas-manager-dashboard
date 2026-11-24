@@ -9,12 +9,28 @@
 
 interface GqlErrorEntry {
   message: string
+  extensions?: { code?: string; [key: string]: unknown }
   [key: string]: unknown
 }
 
 interface GqlResponseBody<T> {
   data?: T
   errors?: GqlErrorEntry[]
+}
+
+/**
+ * Thrown by `gql()` on a GraphQL-level error. `code` is the first error
+ * entry's `extensions.code` (e.g. `"UNAUTHENTICATED"`) when present, so
+ * callers can show a sign-in prompt for that case instead of raw error text.
+ */
+export class GqlError extends Error {
+  code?: string
+
+  constructor(message: string, code?: string) {
+    super(message)
+    this.name = 'GqlError'
+    this.code = code
+  }
 }
 
 let cachedCsrfToken: string | null = null
@@ -111,7 +127,7 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
   }
 
   if (body.errors && body.errors.length > 0) {
-    throw new Error(body.errors.map((e) => e.message).join('; '))
+    throw new GqlError(body.errors.map((e) => e.message).join('; '), body.errors[0]?.extensions?.code)
   }
 
   if (body.data === undefined) {

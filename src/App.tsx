@@ -7,9 +7,12 @@ import './App.css'
 export function App() {
   return (
     <div id="app-shell">
-      <header class="nav">
-        <span class="nav-brand">Manager Dashboard</span>
-        <nav>
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="sidebar-brand-mark" aria-hidden="true" />
+          <span class="sidebar-brand-text">Manager Dashboard</span>
+        </div>
+        <nav class="sidebar-nav">
           <Link activeClassName="active" href="/">
             Dashboard
           </Link>
@@ -20,7 +23,7 @@ export function App() {
             Rent Roll
           </Link>
         </nav>
-      </header>
+      </aside>
       <main class="page">
         <Router>
           <Route path="/" component={Dashboard} />

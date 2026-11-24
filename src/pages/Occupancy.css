@@ -5,11 +5,19 @@
 }
 
 .occupancy-summary {
-  opacity: 0.75;
+  color: var(--text-muted);
 }
 
 .occupancy-error {
   color: #c0392b;
+}
+
+.occupancy-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
 .occupancy-table {
@@ -20,26 +28,42 @@
 .occupancy-table th,
 .occupancy-table td {
   text-align: left;
-  padding: 10px 12px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
 }
 
+.occupancy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .occupancy-table th {
+  font-size: 0.8em;
   font-weight: 600;
-  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
 }
 
-.status-occupied {
-  color: var(--text-h);
+.status-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.85em;
   font-weight: 600;
 }
 
-.status-vacant {
-  opacity: 0.75;
+.status-pill-good {
+  background: var(--pill-good-bg);
+  color: var(--pill-good-text);
+}
+
+.status-pill-neutral {
+  background: var(--pill-neutral-bg);
+  color: var(--pill-neutral-text);
 }
 
 .status-mismatch {
   font-size: 0.85em;
-  opacity: 0.75;
+  color: var(--text-muted);
   font-style: italic;
 }

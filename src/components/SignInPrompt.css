@@ -1,0 +1,27 @@
+.sign-in-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.sign-in-prompt-message {
+  opacity: 0.85;
+}
+
+.sign-in-prompt-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sign-in-prompt-link:hover {
+  opacity: 0.9;
+}

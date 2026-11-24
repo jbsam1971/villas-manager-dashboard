@@ -4,11 +4,13 @@ import type { ResidentBilling } from '../lib/billing.ts'
 import type { Room } from '../lib/rooms.ts'
 import { compareRoomNamesNaturally } from '../lib/rooms.ts'
 import { formatMoney } from '../lib/formData.ts'
+import { GqlError } from '../lib/gql.ts'
+import { SignInPrompt } from '../components/SignInPrompt.tsx'
 import './Dashboard.css'
 
 type LoadState =
   | { status: 'loading' }
-  | { status: 'error'; message: string }
+  | { status: 'error'; message: string; code?: string }
   | { status: 'ready'; rooms: Room[]; billings: ResidentBilling[] }
 
 export function Dashboard() {
@@ -25,7 +27,11 @@ export function Dashboard() {
       })
       .catch((err: unknown) => {
         if (cancelled) return
-        setState({ status: 'error', message: err instanceof Error ? err.message : String(err) })
+        setState({
+          status: 'error',
+          message: err instanceof Error ? err.message : String(err),
+          code: err instanceof GqlError ? err.code : undefined,
+        })
       })
 
     return () => {
@@ -46,7 +52,11 @@ export function Dashboard() {
     return (
       <div class="dashboard-page">
         <h2>Dashboard</h2>
-        <p class="dashboard-error">Could not load dashboard data: {state.message}</p>
+        {state.code === 'UNAUTHENTICATED' ? (
+          <SignInPrompt />
+        ) : (
+          <p class="dashboard-error">Could not load dashboard data: {state.message}</p>
+        )}
       </div>
     )
   }

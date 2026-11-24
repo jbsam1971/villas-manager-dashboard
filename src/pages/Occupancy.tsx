@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'preact/hooks'
 import { fetchRooms } from '../lib/rooms.ts'
 import type { Room } from '../lib/rooms.ts'
+import { GqlError } from '../lib/gql.ts'
+import { SignInPrompt } from '../components/SignInPrompt.tsx'
 import './Occupancy.css'
 
 function formatBeds(room: Room): string {
@@ -13,7 +15,7 @@ function formatBeds(room: Room): string {
 
 type LoadState =
   | { status: 'loading' }
-  | { status: 'error'; message: string }
+  | { status: 'error'; message: string; code?: string }
   | { status: 'ready'; rooms: Room[] }
 
 export function Occupancy() {
@@ -30,7 +32,11 @@ export function Occupancy() {
       })
       .catch((err: unknown) => {
         if (cancelled) return
-        setState({ status: 'error', message: err instanceof Error ? err.message : String(err) })
+        setState({
+          status: 'error',
+          message: err instanceof Error ? err.message : String(err),
+          code: err instanceof GqlError ? err.code : undefined,
+        })
       })
 
     return () => {
@@ -51,7 +57,11 @@ export function Occupancy() {
     return (
       <div class="occupancy-page">
         <h2>Occupancy</h2>
-        <p class="occupancy-error">Could not load occupancy data: {state.message}</p>
+        {state.code === 'UNAUTHENTICATED' ? (
+          <SignInPrompt />
+        ) : (
+          <p class="occupancy-error">Could not load occupancy data: {state.message}</p>
+        )}
       </div>
     )
   }
@@ -75,44 +85,46 @@ export function Occupancy() {
       <p class="occupancy-summary">
         {occupiedCount} of {rooms.length} rooms occupied
       </p>
-      <table class="occupancy-table">
-        <thead>
-          <tr>
-            <th>Room</th>
-            <th>Status</th>
-            <th>Resident(s)</th>
-            <th>Beds</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rooms.map((room) => {
-            const occupied = room.residentNames.length > 0
-            // Room Available is expected to be the opposite of "occupied"; flag it
-            // rather than hide it when the recorded field disagrees with the
-            // derived occupancy (per task spec's edge case).
-            const mismatch = room.roomAvailable !== null && room.roomAvailable === occupied
+      <div class="occupancy-card">
+        <table class="occupancy-table">
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Status</th>
+              <th>Resident(s)</th>
+              <th>Beds</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rooms.map((room) => {
+              const occupied = room.residentNames.length > 0
+              // Room Available is expected to be the opposite of "occupied"; flag it
+              // rather than hide it when the recorded field disagrees with the
+              // derived occupancy (per task spec's edge case).
+              const mismatch = room.roomAvailable !== null && room.roomAvailable === occupied
 
-            return (
-              <tr key={room.key}>
-                <td>{room.roomName}</td>
-                <td>
-                  <span class={occupied ? 'status-occupied' : 'status-vacant'}>
-                    {occupied ? 'Occupied' : 'Vacant'}
-                  </span>
-                  {mismatch && (
-                    <span class="status-mismatch">
-                      {' '}
-                      (Room Available field says {room.roomAvailable ? 'available' : 'not available'})
+              return (
+                <tr key={room.key}>
+                  <td>{room.roomName}</td>
+                  <td>
+                    <span class={occupied ? 'status-pill status-pill-good' : 'status-pill status-pill-neutral'}>
+                      {occupied ? 'Occupied' : 'Vacant'}
                     </span>
-                  )}
-                </td>
-                <td>{occupied ? room.residentNames.join(', ') : '—'}</td>
-                <td>{formatBeds(room)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                    {mismatch && (
+                      <span class="status-mismatch">
+                        {' '}
+                        (Room Available field says {room.roomAvailable ? 'available' : 'not available'})
+                      </span>
+                    )}
+                  </td>
+                  <td>{occupied ? room.residentNames.join(', ') : '—'}</td>
+                  <td>{formatBeds(room)}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
