@@ -11,7 +11,7 @@
 // not add it.
 
 import { gql } from './gql.ts'
-import { DEMO_UNIT_ID } from './rooms.ts'
+import { DEMO_UNIT_ID, resolveResidentRecordTopIds } from './rooms.ts'
 import { getField, extractTextFromHtml, parseIntOrNull } from './formData.ts'
 import type { FormEntryDataItem } from './formData.ts'
 
@@ -339,13 +339,23 @@ function sortContactsAscending(entries: ContactEntry[]): ContactEntry[] {
 
 /**
  * Fetches a single resident's full profile (Demographics, Admission,
- * Diagnoses, Allergies, Providers, Vital Signs, Primary Contacts), running
- * all seven form queries in parallel (same style as `fetchResidentBillings`
- * in lib/billing.ts) and filtering each form's rows down to the requested
- * `residentTopId` client-side, the same `record.baseEntry.topId` linking key
- * billing.ts already uses.
+ * Diagnoses, Allergies, Providers, Vital Signs, Primary Contacts).
+ *
+ * `residentTopId` arrives as the raw "Individual Worksheet" row id (the same
+ * id `Residents.tsx`/`ResidentRecord.tsx` route by, and `Room.residentTopIds`
+ * already uses) — NOT the id these seven forms' `record.baseEntry.topId`
+ * actually match against. Exactly like `billing.ts`'s `buildResidentBillings`,
+ * it must be resolved first via `resolveResidentRecordTopIds` before it can be
+ * compared against any row here; comparing the raw worksheet id directly
+ * (as an earlier version of this file did) silently matches zero rows for
+ * every resident. Confirmed live this session against Jen's Sandbox: the
+ * resolved id is the same one `billing.ts` already resolves to, so this reuses
+ * that existing resolver rather than duplicating the lookup.
  */
 export async function fetchResidentProfile(residentTopId: string): Promise<ResidentProfile> {
+  const resolvedMap = await resolveResidentRecordTopIds([residentTopId])
+  const resolvedId = resolvedMap.get(residentTopId) ?? residentTopId
+
   const [clientInfoData, admissionsData, diagnosesData, allergiesData, providersData, vitalSignsData, contactsData] =
     await Promise.all([
       gql<ProfileQueryResponse>(PROFILE_FORM_QUERY, {
@@ -385,15 +395,15 @@ export async function fetchResidentProfile(residentTopId: string): Promise<Resid
       }),
     ])
 
-  const clientInfoRow = rowsForResident(clientInfoData, residentTopId)[0]
+  const clientInfoRow = rowsForResident(clientInfoData, resolvedId)[0]
 
   return {
     demographics: clientInfoRow ? parseDemographics(clientInfoRow) : null,
-    admissions: rowsForResident(admissionsData, residentTopId).map(parseAdmission),
-    diagnoses: rowsForResident(diagnosesData, residentTopId).map(parseDiagnosis),
-    allergies: rowsForResident(allergiesData, residentTopId).map(parseAllergy),
-    providers: rowsForResident(providersData, residentTopId).map(parseProvider),
-    vitalSigns: sortVitalSignsDescending(rowsForResident(vitalSignsData, residentTopId).map(parseVitalSigns)),
-    contacts: sortContactsAscending(rowsForResident(contactsData, residentTopId).map(parseContact)),
+    admissions: rowsForResident(admissionsData, resolvedId).map(parseAdmission),
+    diagnoses: rowsForResident(diagnosesData, resolvedId).map(parseDiagnosis),
+    allergies: rowsForResident(allergiesData, resolvedId).map(parseAllergy),
+    providers: rowsForResident(providersData, resolvedId).map(parseProvider),
+    vitalSigns: sortVitalSignsDescending(rowsForResident(vitalSignsData, resolvedId).map(parseVitalSigns)),
+    contacts: sortContactsAscending(rowsForResident(contactsData, resolvedId).map(parseContact)),
   }
 }
