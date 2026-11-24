@@ -93,7 +93,7 @@ export function Dashboard() {
         <div class="dashboard-tile">
           <span class="dashboard-tile-label">Current Rent Roll</span>
           <span class="dashboard-tile-value">{formatMoney(rentRollTotal)}</span>
-          <span class="dashboard-tile-sub">across {billings.length} billed resident{billings.length === 1 ? '' : 's'}</span>
+          <span class="dashboard-tile-sub">across {billings.length} occupied resident{billings.length === 1 ? '' : 's'}</span>
         </div>
         <div class="dashboard-tile">
           <span class="dashboard-tile-label">Vacant Units</span>
