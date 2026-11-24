@@ -105,20 +105,22 @@ export interface ResidentCard {
   initials: string
   name: string
   room: string
+  /** e.g. "AL · Level 3", "Memory Care" — sample values, same style as the manager dashboard's "Residents to watch". */
+  careLevel: string
   tags: Tag[]
 }
 
 /** Care-card summary for every resident assigned to this staff member this shift. */
 export function getMyResidents(): ResidentCard[] {
   return [
-    { initials: 'MA', name: 'M. Alvarez', room: '114', tags: [{ text: 'Fall risk', tone: 'risk' }, { text: 'Low bed + mat', tone: 'neutral' }] },
-    { initials: 'RO', name: 'R. Okafor', room: 'MC-08', tags: [{ text: 'Meal plan', tone: 'warn' }, { text: 'Needs cueing', tone: 'neutral' }] },
-    { initials: 'DL', name: 'D. Lindqvist', room: '207', tags: [{ text: '2-person transfer', tone: 'warn' }, { text: 'Walker', tone: 'neutral' }] },
-    { initials: 'JW', name: 'J. Whitehorse', room: '121', tags: [{ text: 'Reposition every 2 h', tone: 'neutral' }, { text: 'Hearing aid, left', tone: 'neutral' }] },
-    { initials: 'EB', name: 'E. Brandt', room: 'MC-03', tags: [{ text: 'Exit-seeking', tone: 'risk' }, { text: "Redirect, don't argue", tone: 'neutral' }] },
-    { initials: 'PN', name: 'P. Nakamura', room: '230', tags: [{ text: 'Pain check before walks', tone: 'neutral' }] },
-    { initials: 'LS', name: 'L. Sorensen', room: '118', tags: [{ text: 'Diabetic diet', tone: 'neutral' }, { text: 'Glasses', tone: 'neutral' }] },
-    { initials: 'GH', name: 'G. Hale', room: '125', tags: [{ text: 'Independent', tone: 'neutral' }, { text: 'Prefers late shower', tone: 'neutral' }] },
+    { initials: 'MA', name: 'M. Alvarez', room: '114', careLevel: 'AL · Level 3', tags: [{ text: 'Fall risk', tone: 'risk' }, { text: 'Low bed + mat', tone: 'neutral' }] },
+    { initials: 'RO', name: 'R. Okafor', room: 'MC-08', careLevel: 'Memory Care', tags: [{ text: 'Meal plan', tone: 'warn' }, { text: 'Needs cueing', tone: 'neutral' }] },
+    { initials: 'DL', name: 'D. Lindqvist', room: '207', careLevel: 'AL · Level 2', tags: [{ text: '2-person transfer', tone: 'warn' }, { text: 'Walker', tone: 'neutral' }] },
+    { initials: 'JW', name: 'J. Whitehorse', room: '121', careLevel: 'AL · Level 4', tags: [{ text: 'Reposition every 2 h', tone: 'neutral' }, { text: 'Hearing aid, left', tone: 'neutral' }] },
+    { initials: 'EB', name: 'E. Brandt', room: 'MC-03', careLevel: 'Memory Care', tags: [{ text: 'Exit-seeking', tone: 'risk' }, { text: "Redirect, don't argue", tone: 'neutral' }] },
+    { initials: 'PN', name: 'P. Nakamura', room: '230', careLevel: 'AL · Level 1', tags: [{ text: 'Pain check before walks', tone: 'neutral' }] },
+    { initials: 'LS', name: 'L. Sorensen', room: '118', careLevel: 'AL · Level 2', tags: [{ text: 'Diabetic diet', tone: 'neutral' }, { text: 'Glasses', tone: 'neutral' }] },
+    { initials: 'GH', name: 'G. Hale', room: '125', careLevel: 'AL · Level 1', tags: [{ text: 'Independent', tone: 'neutral' }, { text: 'Prefers late shower', tone: 'neutral' }] },
   ]
 }
 

@@ -1,0 +1,396 @@
+/*
+ * Care staff · phone, next task — direct port of the reviewed Design
+ * artifact mockup (project/CareStaffPhone.dc.html). Pure sample-data page:
+ * see src/pages/CareStaffPhone.tsx. Tokens come from
+ * src/styles/deepblu-tokens.css — no new color values are introduced here.
+ * `csp-*` prefix keeps this page's classes distinct from the tablet shift
+ * view's `cs-*` ones (same visual language, different layout: mobile
+ * single-column vs. tablet two-column, and fixed bottom tab bar here).
+ *
+ * The mockup's design-canvas frame is a static 390x844 artboard — that's
+ * just how the design tool shows "this is a phone screen." This page is
+ * built fluid instead: no hardcoded device width, min-height: 100svh (with
+ * a 100vh fallback for browsers that don't support svh), and a fixed
+ * bottom tab bar with scroll padding reserved for it.
+ */
+
+.csp-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  font-family: var(--font-ui);
+  background: var(--db-surface-base);
+}
+
+/* ---------- Header ---------- */
+
+.csp-header {
+  flex-shrink: 0;
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.csp-header-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 20px 18px;
+  box-sizing: border-box;
+}
+
+.csp-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.csp-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-inverse-secondary);
+}
+
+.csp-sync {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.csp-sync-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--cyan-500);
+}
+
+.csp-header-bottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.csp-staff-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--db-text-inverse);
+}
+
+.csp-progress-count {
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+  white-space: nowrap;
+}
+
+.csp-progress-track {
+  height: 6px;
+  border-radius: 2px;
+  background: var(--blu-850);
+  overflow: hidden;
+}
+
+.csp-progress-fill {
+  height: 100%;
+  background: var(--cyan-500);
+}
+
+/* ---------- Scrollable main area ---------- */
+
+.csp-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 16px calc(16px + var(--csp-tabbar-height, 84px));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.csp-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Next up card ---------- */
+
+.csp-next-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+  box-sizing: border-box;
+}
+
+.csp-empty-card {
+  padding: 18px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+  font-size: 14px;
+  color: var(--db-text-secondary);
+  box-sizing: border-box;
+}
+
+.csp-next-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.csp-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--blu-100);
+  color: var(--blu-600);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.csp-next-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.csp-next-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.csp-next-room {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.csp-next-task {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--db-text-primary);
+}
+
+.csp-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.csp-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.csp-tag-risk {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+}
+
+.csp-tag-warn {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+}
+
+.csp-tag-unplanned {
+  background: var(--cyan-100);
+  color: var(--cyan-600);
+}
+
+.csp-tag-neutral {
+  background: var(--ink-100);
+  color: var(--ink-600);
+}
+
+.csp-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.csp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--db-radius-control);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.csp-btn-done {
+  grid-column: span 2;
+  min-height: 56px;
+  background: var(--blu-500);
+  color: var(--db-text-inverse);
+  border: 1px solid var(--blu-500);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.csp-btn-outline {
+  min-height: 48px;
+  background: var(--db-surface-raised);
+  color: var(--db-text-primary);
+  border: 1px solid var(--db-border-strong);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.csp-nurse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--db-radius-control);
+}
+
+/* ---------- Coming up list ---------- */
+
+.csp-coming-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+  overflow: hidden;
+}
+
+.csp-coming-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--db-border-subtle);
+  text-decoration: none;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+.csp-coming-row-last {
+  border-bottom: none;
+}
+
+.csp-coming-time {
+  flex: 0 0 44px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-text-secondary);
+}
+
+.csp-coming-time-overdue {
+  color: var(--db-status-error-ink);
+}
+
+.csp-coming-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.csp-coming-task {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.csp-coming-resident {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Bottom tab bar ---------- */
+
+.csp-tabbar {
+  --csp-tabbar-height: 84px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: start;
+  padding: 6px 4px 14px;
+  background: var(--db-surface-raised);
+  border-top: 1px solid var(--db-border-subtle);
+  box-sizing: border-box;
+}
+
+.csp-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  color: var(--db-text-secondary);
+  text-decoration: none;
+}
+
+.csp-tab-active {
+  color: var(--blu-500);
+}
+
+.csp-tab-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.csp-tab-fab {
+  min-height: 52px;
+}
+
+.csp-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--blu-500);
+  color: var(--db-text-inverse);
+}

@@ -7,6 +7,7 @@ import { ResidentRecord } from './pages/ResidentRecord.tsx'
 import { Occupancy } from './pages/Occupancy.tsx'
 import { RentRoll } from './pages/RentRoll.tsx'
 import { CareStaffShift } from './pages/CareStaffShift.tsx'
+import { CareStaffPhone } from './pages/CareStaffPhone.tsx'
 import './App.css'
 
 // Icons ported verbatim from the deepBLU mockup (project/Main.dc.html),
@@ -155,6 +156,9 @@ export function App() {
             <Link activeClassName="active" href="/care-staff">
               Care staff view (preview)
             </Link>
+            <Link activeClassName="active" href="/care-staff/phone">
+              Care staff phone view (preview)
+            </Link>
           </div>
 
           <div class="db-nav-sync">
@@ -171,6 +175,7 @@ export function App() {
           <Route path="/occupancy" component={Occupancy} />
           <Route path="/rent-roll" component={RentRoll} />
           <Route path="/care-staff" component={CareStaffShift} />
+          <Route path="/care-staff/phone" component={CareStaffPhone} />
         </Router>
       </main>
     </div>
