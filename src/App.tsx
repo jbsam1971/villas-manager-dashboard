@@ -1,14 +1,8 @@
 import { Router, Route, Link } from 'preact-router'
+import { Dashboard } from './pages/Dashboard.tsx'
 import { Occupancy } from './pages/Occupancy.tsx'
 import { RentRoll } from './pages/RentRoll.tsx'
 import './App.css'
-
-// Placeholder page — real logic lands in task 8 (Dashboard).
-// Once it exists under src/pages/, this inline placeholder should be swapped for an import
-// from there rather than kept side-by-side.
-function Dashboard() {
-  return <p>Dashboard — coming soon</p>
-}
 
 export function App() {
   return (
