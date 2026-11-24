@@ -6,6 +6,7 @@ import { compareRoomNamesNaturally } from '../lib/rooms.ts'
 import { formatMoney } from '../lib/formData.ts'
 import { GqlError } from '../lib/gql.ts'
 import { SignInPrompt } from '../components/SignInPrompt.tsx'
+import { OccupancyDonut } from '../components/OccupancyDonut.tsx'
 import './Dashboard.css'
 
 type LoadState =
@@ -84,33 +85,50 @@ export function Dashboard() {
   // so it's computed from the same shared `billings`, not re-derived.
   const rentRollTotal = billings.reduce((sum, b) => sum + b.total, 0)
 
+  // Bed-level census (distinct from the room-level Occupancy tile above): a
+  // room is only counted here when both bed fields resolved, consistent with
+  // formatBeds's existing treatment of a null bed count as "unavailable"
+  // rather than zero — a partially-unresolved room is excluded rather than
+  // skewing the ratio with a guessed value.
+  const roomsWithBedData = rooms.filter((room) => room.numberOfBeds !== null && room.openBeds !== null)
+  const availableBeds = roomsWithBedData.reduce((sum, room) => sum + (room.openBeds ?? 0), 0)
+  const occupiedBeds = roomsWithBedData.reduce(
+    (sum, room) => sum + ((room.numberOfBeds ?? 0) - (room.openBeds ?? 0)),
+    0
+  )
+
   return (
     <div class="dashboard-page">
       <h2>Dashboard</h2>
       <div class="dashboard-tiles">
-        <div class="dashboard-tile">
+        <div class="dashboard-tile dashboard-tile--blue">
           <span class="dashboard-tile-label">Occupancy</span>
           <span class="dashboard-tile-value">{occupancyPercent}%</span>
           <span class="dashboard-tile-sub">
             {occupiedRooms.length} of {totalRooms} units occupied
           </span>
         </div>
-        <div class="dashboard-tile">
+        <div class="dashboard-tile dashboard-tile--blue">
           <span class="dashboard-tile-label">Census</span>
           <span class="dashboard-tile-value">{census}</span>
           <span class="dashboard-tile-sub">current resident{census === 1 ? '' : 's'}</span>
         </div>
-        <div class="dashboard-tile">
+        <div class="dashboard-tile dashboard-tile--green">
           <span class="dashboard-tile-label">Current Rent Roll</span>
           <span class="dashboard-tile-value">{formatMoney(rentRollTotal)}</span>
           <span class="dashboard-tile-sub">across {billings.length} occupied resident{billings.length === 1 ? '' : 's'}</span>
         </div>
-        <div class="dashboard-tile">
+        <div class="dashboard-tile dashboard-tile--neutral">
           <span class="dashboard-tile-label">Vacant Units</span>
           <span class="dashboard-tile-value">{vacantRooms.length}</span>
           <span class="dashboard-tile-sub">of {totalRooms} total units</span>
         </div>
       </div>
+
+      <section class="dashboard-census-section">
+        <h3>Census &amp; Occupancy</h3>
+        <OccupancyDonut occupied={occupiedBeds} available={availableBeds} />
+      </section>
 
       <section class="dashboard-vacant-section">
         <h3>Vacant units</h3>

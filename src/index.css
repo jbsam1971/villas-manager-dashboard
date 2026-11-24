@@ -20,15 +20,17 @@
   --text-h: #101828;
   --text-muted: #667085;
 
-  --accent: #2f6fed;
-  --accent-bg: rgba(47, 111, 237, 0.1);
+  --accent: #1a6bb5;
+  --accent-hover: #155d9e;
+  --accent-active: #104d85;
+  --accent-bg: rgba(26, 107, 181, 0.1);
 
   --pill-good-bg: #e6f4ea;
-  --pill-good-text: #1e7b34;
-  --pill-neutral-bg: #eef0f3;
-  --pill-neutral-text: #667085;
+  --pill-good-text: #137333;
+  --pill-neutral-bg: #f1f3f4;
+  --pill-neutral-text: #5f6368;
 
-  --radius: 10px;
+  --radius: 8px;
   --radius-sm: 6px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;

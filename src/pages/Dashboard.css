@@ -21,8 +21,21 @@
   padding: 20px 24px;
   background: var(--card-bg);
   border: 1px solid var(--border);
+  border-left: 4px solid transparent;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+.dashboard-tile--blue {
+  border-left-color: var(--accent);
+}
+
+.dashboard-tile--green {
+  border-left-color: var(--pill-good-text);
+}
+
+.dashboard-tile--neutral {
+  border-left-color: var(--pill-neutral-text);
 }
 
 .dashboard-tile-label {
@@ -42,6 +55,11 @@
 .dashboard-tile-sub {
   font-size: 0.85em;
   color: var(--text-muted);
+}
+
+.dashboard-census-section h3 {
+  font-size: 1.1em;
+  margin: 0 0 12px;
 }
 
 .dashboard-vacant-section {
