@@ -1,0 +1,82 @@
+/*
+ * deepBLU design tokens — exact values from the user's Design artifact
+ * (https://claude.ai/artifact/4WrUeaGLaozVjE1E9bMR5u, project/ds/deepblu/).
+ * Scoped under distinct `--blu-*`/`--ink-*`/etc. names so these never collide
+ * with the existing `--accent`/`--card-bg`/etc. tokens in src/index.css —
+ * Occupancy/Rent Roll/Residents/Resident Record keep their current look
+ * untouched. Only the new "Today" dashboard page and the rebuilt sidebar nav
+ * consume these.
+ */
+:root {
+  /* Blue ramp */
+  --blu-950: #04101f;
+  --blu-900: #071b33; /* Abyss Blue — primary brand surface */
+  --blu-850: #0a2646;
+  --blu-800: #0d3159;
+  --blu-700: #123c75;
+  --blu-600: #0f52d6;
+  --blu-500: #1267ff; /* Deep Electric Blue — signature */
+  --blu-400: #3d8bff;
+  --blu-300: #7fb2ff;
+  --blu-200: #b9d3ff;
+  --blu-100: #deeaff;
+  --blu-050: #eef4ff;
+
+  /* Neutral ramp */
+  --ink-900: #0c1219;
+  --ink-800: #18202b;
+  --ink-700: #293341;
+  --ink-600: #3e4a59;
+  --ink-500: #5c6877;
+  --ink-400: #8792a1;
+  --ink-300: #b4bdc8;
+  --ink-200: #d9dfe7;
+  --ink-100: #e9eef4;
+  --ink-050: #f5f7fa;
+
+  /* Signal / accent */
+  --cyan-500: #36d7e5; /* Signal Cyan — live/sync status only */
+  --cyan-600: #1bb3c1;
+  --cyan-100: #d6f6f9;
+
+  /* Semantic status */
+  --db-status-ok: #25a667;
+  --db-status-ok-soft: #dff3e8;
+  --db-status-ok-ink: #155c39;
+  --db-status-warn: #c9861b;
+  --db-status-warn-soft: #faefd9;
+  --db-status-warn-ink: #6e4607;
+  --db-status-error: #d93a3f;
+  --db-status-error-soft: #fbe3e4;
+  --db-status-error-ink: #8f1d22;
+  --db-status-error-border: #f1b9bb;
+  --db-status-info-soft: #eef4ff;
+  --db-status-info-ink: #0f52d6;
+  --db-status-info-border: #b9d3ff;
+
+  /* Surfaces / text / borders */
+  --db-surface-base: var(--ink-050);
+  --db-surface-raised: #ffffff;
+  --db-surface-deep: var(--blu-900);
+  --db-surface-deep-raised: var(--blu-850);
+  --db-text-primary: var(--ink-800);
+  --db-text-secondary: var(--ink-500);
+  --db-text-muted: var(--ink-400);
+  --db-text-inverse: #ffffff;
+  --db-text-inverse-secondary: #9fb4cf;
+  --db-text-link: var(--blu-500);
+  --db-text-link-hover: var(--blu-600);
+  --db-border-subtle: var(--ink-200);
+  --db-border-strong: var(--ink-300);
+  --db-border-deep: #153a63;
+  --db-border-deep-strong: #1e5591;
+
+  /* Radii */
+  --db-radius-control: 4px;
+  --db-radius-panel: 6px;
+  --db-radius-pill: 999px;
+
+  /* Fonts */
+  --font-display: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
