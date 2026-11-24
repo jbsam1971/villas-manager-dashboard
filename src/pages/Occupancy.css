@@ -1,0 +1,45 @@
+.occupancy-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.occupancy-summary {
+  opacity: 0.75;
+}
+
+.occupancy-error {
+  color: #c0392b;
+}
+
+.occupancy-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.occupancy-table th,
+.occupancy-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.occupancy-table th {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.status-occupied {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.status-vacant {
+  opacity: 0.75;
+}
+
+.status-mismatch {
+  font-size: 0.85em;
+  opacity: 0.75;
+  font-style: italic;
+}

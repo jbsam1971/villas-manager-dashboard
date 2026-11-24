@@ -1,15 +1,12 @@
 import { Router, Route, Link } from 'preact-router'
+import { Occupancy } from './pages/Occupancy.tsx'
 import './App.css'
 
-// Placeholder pages — real logic lands in later tasks (6: Occupancy, 7: Rent Roll, 8: Dashboard).
+// Placeholder pages — real logic lands in later tasks (7: Rent Roll, 8: Dashboard).
 // Once those pages exist under src/pages/, these inline placeholders should be swapped for imports
 // from there rather than kept side-by-side.
 function Dashboard() {
   return <p>Dashboard — coming soon</p>
-}
-
-function Occupancy() {
-  return <p>Occupancy — coming soon</p>
 }
 
 function RentRoll() {
