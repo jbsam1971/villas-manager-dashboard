@@ -131,3 +131,12 @@
   min-width: 0;
   padding: 32px;
 }
+
+/* Care Staff shift view: full-bleed, no sidebar, page owns its own layout. */
+#app-shell.app-shell-full {
+  display: block;
+}
+
+.page.page-full {
+  padding: 0;
+}

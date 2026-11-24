@@ -1,0 +1,631 @@
+/*
+ * Care staff · tablet shift view — direct port of the reviewed Design
+ * artifact mockup (project/CareStaff.dc.html). Pure sample-data page: see
+ * src/pages/CareStaffShift.tsx. Tokens come from src/styles/deepblu-tokens.css
+ * — no new color values are introduced here. `cs-*` prefix keeps this
+ * page's classes distinct from the Morning Huddle dashboard's `mh-*` ones.
+ */
+
+.cs-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  font-family: var(--font-ui);
+  background: var(--db-surface-base);
+}
+
+/* ---------- Header ---------- */
+
+.cs-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 20px 28px;
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.cs-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.cs-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-inverse-secondary);
+}
+
+.cs-staff-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--db-text-inverse);
+}
+
+.cs-clock-line {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.cs-sync-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--cyan-500);
+  box-shadow: 0 0 12px rgba(54, 215, 229, 0.5);
+}
+
+.cs-header-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 280px;
+  min-width: 0;
+  justify-content: center;
+}
+
+.cs-progress-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.cs-progress-label {
+  color: var(--db-text-inverse-secondary);
+}
+
+.cs-progress-count {
+  font-weight: 700;
+  color: var(--db-text-inverse);
+}
+
+.cs-progress-track {
+  height: 10px;
+  border-radius: 2px;
+  background: var(--blu-850);
+  overflow: hidden;
+}
+
+.cs-progress-fill {
+  height: 100%;
+  background: var(--cyan-500);
+}
+
+.cs-progress-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.cs-header-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+/* ---------- Shared buttons ---------- */
+
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: var(--db-radius-control);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.cs-btn-primary {
+  background: var(--blu-500);
+  color: var(--db-text-inverse);
+  border: 1px solid var(--blu-500);
+}
+
+.cs-btn-outline {
+  background: var(--db-surface-raised);
+  color: var(--db-text-primary);
+  border: 1px solid var(--db-border-strong);
+}
+
+.cs-btn-outline-dark {
+  background: transparent;
+  color: var(--db-text-inverse);
+  border: 1px solid var(--db-border-deep-strong);
+}
+
+.cs-btn-task {
+  min-width: 88px;
+}
+
+/* ---------- Body / layout ---------- */
+
+.cs-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 28px 28px;
+  box-sizing: border-box;
+}
+
+/* ---------- Alerts strip ---------- */
+
+.cs-alerts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.cs-alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--db-radius-panel);
+}
+
+.cs-alert-high {
+  background: var(--db-status-error-soft);
+  border: 1px solid var(--db-status-error-border);
+  color: var(--db-status-error-ink);
+}
+
+.cs-alert-medium {
+  background: var(--db-status-warn-soft);
+  border: 1px solid color-mix(in srgb, var(--db-status-warn) 45%, transparent);
+  color: var(--db-status-warn-ink);
+}
+
+.cs-alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cs-alert-headline {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.cs-alert-detail {
+  margin: 0;
+  font-size: 14px;
+  color: var(--db-text-primary);
+}
+
+/* ---------- Content: two-column layout ---------- */
+
+.cs-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.cs-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.cs-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+  min-width: 0;
+}
+
+.cs-panel--tasks {
+  flex: 2 1 560px;
+}
+
+.cs-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 20px 20px 16px;
+}
+
+.cs-panel-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.cs-panel-title-lg {
+  font-size: 21px;
+}
+
+.cs-panel-note {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Filter toggle (Now and next) ---------- */
+
+.cs-filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-control);
+}
+
+.cs-filter-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--db-radius-control);
+  background: transparent;
+  color: var(--db-text-secondary);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cs-filter-btn-active {
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+/* ---------- Task groups / rows ---------- */
+
+.cs-task-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-group-header {
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--db-surface-base);
+  color: var(--db-text-secondary);
+}
+
+.cs-group-header-overdue {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+}
+
+.cs-task-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--db-border-subtle);
+}
+
+.cs-task-row-overdue {
+  background: var(--db-status-error-soft);
+}
+
+.cs-task-time {
+  flex: 0 0 56px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--db-text-secondary);
+}
+
+.cs-task-time-overdue {
+  color: var(--db-status-error-ink);
+}
+
+.cs-task-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.cs-task-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.cs-task-name-done {
+  text-decoration: line-through;
+  color: var(--db-text-secondary);
+}
+
+.cs-task-resident {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+.cs-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cs-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cs-tag-risk {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+}
+
+.cs-tag-warn {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+}
+
+/* `--cyan-100` already exists in deepblu-tokens.css, so the "unplanned" tag
+   tone uses it directly for the background (no color-mix derivation
+   needed); `--cyan-600` (the darker half of the signal-cyan ramp) is used
+   for readable text on top of it. */
+.cs-tag-unplanned {
+  background: var(--cyan-100);
+  color: var(--cyan-600);
+}
+
+.cs-tag-neutral {
+  background: var(--ink-100);
+  color: var(--ink-600);
+}
+
+.cs-task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.cs-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--ink-100);
+  color: var(--ink-600);
+}
+
+.cs-status-pill-done {
+  background: var(--db-status-ok-soft);
+  color: var(--db-status-ok-ink);
+}
+
+.cs-undo-btn {
+  min-height: 44px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: var(--blu-600);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cs-tasks-caption {
+  margin: 0;
+  padding: 16px 20px 20px;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- My residents ---------- */
+
+.cs-resident-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-resident-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--db-border-subtle);
+  text-decoration: none;
+  color: inherit;
+}
+
+.cs-resident-row-last {
+  border-bottom: none;
+}
+
+.cs-resident-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--blu-100);
+  color: var(--blu-600);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.cs-resident-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cs-resident-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cs-resident-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--db-text-primary);
+}
+
+.cs-resident-room {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Handoff from night shift ---------- */
+
+.cs-handoff-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.cs-handoff-note {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--db-border-subtle);
+}
+
+.cs-handoff-note-last {
+  border-bottom: none;
+}
+
+.cs-handoff-meta {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.cs-handoff-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--db-text-primary);
+}
+
+.cs-handoff-link {
+  margin: 14px 20px 20px;
+  padding: 0;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--blu-600);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cs-handoff-ack {
+  margin: 14px 20px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--db-status-ok-ink);
+}
+
+/* ---------- Before you clock out ---------- */
+
+.cs-clockout-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px;
+}
+
+.cs-clockout-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--db-border-subtle);
+}
+
+.cs-clockout-row:last-child {
+  border-bottom: none;
+}
+
+.cs-checklist-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid var(--db-border-strong);
+  background: var(--db-surface-raised);
+  color: var(--db-text-inverse);
+}
+
+.cs-checklist-box-ok {
+  background: var(--blu-500);
+  border-color: var(--blu-500);
+}
+
+.cs-clockout-label {
+  flex: 1 1 auto;
+  font-size: 14px;
+  color: var(--db-text-primary);
+}
+
+.cs-clockout-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Footer ---------- */
+
+.cs-footer {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}

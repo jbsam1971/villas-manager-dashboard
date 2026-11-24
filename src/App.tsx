@@ -1,9 +1,12 @@
+import { useState } from 'preact/hooks'
 import { Router, Route, Link } from 'preact-router'
+import type { RouterOnChangeArgs } from 'preact-router'
 import { Dashboard } from './pages/Dashboard.tsx'
 import { Residents } from './pages/Residents.tsx'
 import { ResidentRecord } from './pages/ResidentRecord.tsx'
 import { Occupancy } from './pages/Occupancy.tsx'
 import { RentRoll } from './pages/RentRoll.tsx'
+import { CareStaffShift } from './pages/CareStaffShift.tsx'
 import './App.css'
 
 // Icons ported verbatim from the deepBLU mockup (project/Main.dc.html),
@@ -82,79 +85,92 @@ function IconReports() {
 }
 
 export function App() {
+  const [path, setPath] = useState(window.location.pathname)
+  // The Care Staff shift view is a standalone, full-bleed tablet/phone page
+  // (its own header, no manager sidebar) — matching the Design artifact's
+  // CareStaff.dc.html, which has no left nav at all. The manager sidebar
+  // below is skipped for this route rather than squeezed around it.
+  const isCareStaffRoute = path.startsWith('/care-staff')
+
   return (
-    <div id="app-shell">
-      <nav class="db-nav" aria-label="Dashboard sections">
-        <div class="db-nav-brand">
-          <div class="db-nav-logo" aria-label="Community logo">
-            LOGO
+    <div id="app-shell" class={isCareStaffRoute ? 'app-shell-full' : undefined}>
+      {!isCareStaffRoute && (
+        <nav class="db-nav" aria-label="Dashboard sections">
+          <div class="db-nav-brand">
+            <div class="db-nav-logo" aria-label="Community logo">
+              LOGO
+            </div>
+            <div class="db-nav-brand-text">
+              <span class="db-nav-brand-name">[Community name]</span>
+              <span class="db-nav-brand-sub">Assisted Living · Memory Care</span>
+            </div>
           </div>
-          <div class="db-nav-brand-text">
-            <span class="db-nav-brand-name">[Community name]</span>
-            <span class="db-nav-brand-sub">Assisted Living · Memory Care</span>
+
+          <div class="db-nav-links">
+            <Link activeClassName="active" href="/">
+              <IconToday />
+              Today
+            </Link>
+            <a href="#">
+              <IconCensus />
+              Census &amp; occupancy
+            </a>
+            <a href="#">
+              <IconClinical />
+              Clinical
+            </a>
+            <a href="#">
+              <IconMedications />
+              Medications
+            </a>
+            <a href="#">
+              <IconStaffing />
+              Staffing
+            </a>
+            <a href="#">
+              <IconIncidents />
+              Incidents
+            </a>
+            <a href="#">
+              <IconSurvey />
+              Survey readiness
+            </a>
+            <a href="#">
+              <IconReports />
+              Reports
+            </a>
           </div>
-        </div>
 
-        <div class="db-nav-links">
-          <Link activeClassName="active" href="/">
-            <IconToday />
-            Today
-          </Link>
-          <a href="#">
-            <IconCensus />
-            Census &amp; occupancy
-          </a>
-          <a href="#">
-            <IconClinical />
-            Clinical
-          </a>
-          <a href="#">
-            <IconMedications />
-            Medications
-          </a>
-          <a href="#">
-            <IconStaffing />
-            Staffing
-          </a>
-          <a href="#">
-            <IconIncidents />
-            Incidents
-          </a>
-          <a href="#">
-            <IconSurvey />
-            Survey readiness
-          </a>
-          <a href="#">
-            <IconReports />
-            Reports
-          </a>
-        </div>
+          <div class="db-nav-links db-nav-links-existing">
+            <span class="db-nav-section-label">Existing reports</span>
+            <Link activeClassName="active" href="/residents">
+              Residents
+            </Link>
+            <Link activeClassName="active" href="/occupancy">
+              Occupancy
+            </Link>
+            <Link activeClassName="active" href="/rent-roll">
+              Rent Roll
+            </Link>
+            <Link activeClassName="active" href="/care-staff">
+              Care staff view (preview)
+            </Link>
+          </div>
 
-        <div class="db-nav-links db-nav-links-existing">
-          <span class="db-nav-section-label">Existing reports</span>
-          <Link activeClassName="active" href="/residents">
-            Residents
-          </Link>
-          <Link activeClassName="active" href="/occupancy">
-            Occupancy
-          </Link>
-          <Link activeClassName="active" href="/rent-roll">
-            Rent Roll
-          </Link>
-        </div>
-
-        <div class="db-nav-sync">
-          <span class="db-nav-sync-dot" aria-hidden="true" />
-          Synced from eMAR, care plans and Rent Roll · 6:00 AM
-        </div>
-      </nav>
-      <main class="page">
-        <Router>
+          <div class="db-nav-sync">
+            <span class="db-nav-sync-dot" aria-hidden="true" />
+            Synced from eMAR, care plans and Rent Roll · 6:00 AM
+          </div>
+        </nav>
+      )}
+      <main class={isCareStaffRoute ? 'page page-full' : 'page'}>
+        <Router onChange={(e: RouterOnChangeArgs) => setPath(e.url)}>
           <Route path="/" component={Dashboard} />
           <Route path="/residents" component={Residents} />
           <Route path="/residents/:id" component={ResidentRecord} />
           <Route path="/occupancy" component={Occupancy} />
           <Route path="/rent-roll" component={RentRoll} />
+          <Route path="/care-staff" component={CareStaffShift} />
         </Router>
       </main>
     </div>
