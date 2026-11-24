@@ -38,6 +38,49 @@
   border-left-color: var(--pill-neutral-text);
 }
 
+.dashboard-kpi-placeholders h3 {
+  font-size: 1.1em;
+  margin: 0 0 4px;
+}
+
+.dashboard-placeholders-note {
+  color: var(--text-muted);
+  font-size: 0.85em;
+  margin: 0 0 12px;
+}
+
+.dashboard-tile--placeholder {
+  position: relative;
+  border: 1px dashed var(--border);
+  border-left: 1px dashed var(--border);
+  background: var(--pill-neutral-bg);
+  box-shadow: none;
+}
+
+.dashboard-tile--placeholder .dashboard-tile-label,
+.dashboard-tile--placeholder .dashboard-tile-sub {
+  color: var(--text-muted);
+}
+
+.dashboard-tile-value--placeholder {
+  color: var(--text-muted);
+}
+
+.dashboard-placeholder-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
 .dashboard-tile-label {
   font-size: 0.85em;
   font-weight: 600;

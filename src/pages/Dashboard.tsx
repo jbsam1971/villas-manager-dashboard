@@ -144,6 +144,30 @@ export function Dashboard() {
           </ul>
         )}
       </section>
+
+      <section class="dashboard-kpi-placeholders">
+        <h3>More on the way</h3>
+        <p class="dashboard-placeholders-note">
+          These will show real numbers once their data is connected on the platform.
+        </p>
+        <div class="dashboard-tiles">
+          {PLACEHOLDER_KPIS.map((kpi) => (
+            <div key={kpi.label} class="dashboard-tile dashboard-tile--placeholder">
+              <span class="dashboard-placeholder-badge">Not yet connected</span>
+              <span class="dashboard-tile-label">{kpi.label}</span>
+              <span class="dashboard-tile-value dashboard-tile-value--placeholder">—</span>
+              <span class="dashboard-tile-sub">{kpi.sub}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
+
+const PLACEHOLDER_KPIS = [
+  { label: 'Missed MARs', sub: 'medication administration' },
+  { label: 'Missed ADLs', sub: 'activities of daily living' },
+  { label: 'Assessments Past Due', sub: 'assessments & service plans' },
+  { label: 'Residents with Warnings', sub: 'open resident warnings' },
+]
