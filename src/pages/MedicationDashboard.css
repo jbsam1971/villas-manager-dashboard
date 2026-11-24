@@ -1,0 +1,892 @@
+/*
+ * MAR / Medication dashboard — direct port of the reviewed Design artifact
+ * mockup (MAR / Medication dashboard). Pure sample-data page: see
+ * src/pages/MedicationDashboard.tsx. Tokens come from
+ * src/styles/deepblu-tokens.css only — no new color values are introduced
+ * here except documented one-off translucency overlays on the dark "Med
+ * pass now" panel (noted inline below).
+ */
+
+.med-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--font-ui);
+}
+
+.med-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Header ---------- */
+
+.med-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.med-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.med-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-secondary);
+}
+
+.med-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  color: var(--db-text-primary);
+}
+
+.med-census-line {
+  margin: 0;
+  font-size: 15px;
+  color: var(--db-text-secondary);
+}
+
+.med-header-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.med-range-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--db-border-subtle);
+  border-radius: 4px;
+  background: var(--db-surface-raised);
+}
+
+.med-range-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--db-text-secondary);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.med-range-btn-active {
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.med-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--db-border-strong);
+  border-radius: var(--db-radius-control);
+  background: var(--db-surface-raised);
+  color: var(--db-text-secondary);
+}
+
+.med-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--db-text-primary);
+  min-width: 180px;
+}
+
+.med-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: var(--db-radius-control);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.med-btn-primary {
+  background: var(--blu-500);
+  color: var(--db-text-inverse);
+  border: 1px solid var(--blu-500);
+}
+
+/* ---------- Med pass now ---------- */
+
+.med-pass-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 32px;
+  border-radius: 6px;
+  background-color: var(--blu-900);
+  background-image:
+    linear-gradient(rgba(61, 139, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 139, 255, 0.16) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--db-text-inverse);
+}
+
+.med-pass-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.med-pass-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan-500);
+}
+
+.med-pass-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cyan-500);
+  box-shadow: 0 0 12px rgba(54, 215, 229, 0.5);
+}
+
+.med-pass-minutes {
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.med-pass-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.med-pass-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.med-pass-stat-value {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--db-text-inverse);
+}
+
+.med-pass-stat-value-of {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--db-text-inverse-secondary);
+}
+
+/* "at risk of running late" is a warning number on the dark panel. No
+   deepBLU token is a light-enough red for AA contrast on --blu-900, so this
+   derives a lighter tint from the error token rather than inventing a new
+   color value outright — see task notes. */
+.med-pass-stat-value-risk {
+  color: color-mix(in srgb, var(--db-status-error) 35%, white);
+}
+
+.med-pass-stat-label {
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.med-cart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.med-cart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--db-border-deep);
+  border-radius: 6px;
+  /* Translucent overlay on the dark panel background, not a new solid
+     color token — a one-off per task notes. */
+  background: rgba(7, 27, 51, 0.72);
+}
+
+.med-cart-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--db-text-inverse);
+}
+
+.med-cart-who {
+  color: var(--db-text-inverse-secondary);
+}
+
+.med-cart-track {
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.med-cart-fill {
+  display: block;
+  height: 100%;
+  background: var(--cyan-500);
+}
+
+/* late carts get the blue fill instead of cyan, so a glance at the bar
+   color (not just the text) tells you which carts are behind. */
+.med-cart-fill-late {
+  background: var(--blu-400);
+}
+
+.med-cart-given {
+  color: var(--db-text-inverse-secondary);
+}
+
+.med-cart-flag {
+  font-weight: 600;
+  color: var(--cyan-500);
+}
+
+.med-cart-flag-late {
+  color: color-mix(in srgb, var(--db-status-error) 35%, white);
+}
+
+/* ---------- Sections (shared headers) ---------- */
+
+.med-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.med-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.med-section-title,
+.med-panel-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.med-section-note,
+.med-panel-note {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- KPI tiles ---------- */
+
+.med-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.med-kpi-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.med-kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--db-text-secondary);
+}
+
+.med-kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.med-kpi-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--db-text-primary);
+}
+
+.med-kpi-unit {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.med-kpi-sparkline {
+  width: 100%;
+  height: 28px;
+  display: block;
+}
+
+.med-kpi-sparkline polyline {
+  fill: none;
+  stroke: var(--blu-500);
+  stroke-width: 1.5;
+}
+
+.med-kpi-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.med-kpi-delta {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.med-kpi-delta-good {
+  color: var(--db-status-ok);
+}
+
+.med-kpi-delta-bad {
+  color: var(--db-status-error);
+}
+
+.med-kpi-delta-neutral {
+  color: var(--db-text-secondary);
+}
+
+.med-kpi-target {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Order to administration ---------- */
+
+.med-flow-row {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.med-flow-step {
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.med-flow-step-warn {
+  background: var(--db-status-error-soft);
+  border-color: var(--db-status-error-border);
+}
+
+.med-flow-step-number {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.med-flow-step-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.med-flow-step-count {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.med-flow-step-note {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.med-flow-step-note-warn {
+  color: var(--db-status-error-ink);
+}
+
+.med-flow-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  color: var(--db-text-muted);
+  font-size: 16px;
+  align-self: center;
+}
+
+/* ---------- Shared row / panel layout ---------- */
+
+.med-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.med-three-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.med-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: 6px;
+  box-shadow: none;
+  min-width: 0;
+}
+
+.med-panel--exceptions {
+  flex: 2 1 600px;
+}
+.med-panel--prn {
+  flex: 1 1 340px;
+}
+
+.med-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 20px 24px 0;
+}
+
+.med-panel-body {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.med-panel-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-text-link);
+  text-decoration: none;
+}
+.med-panel-link:hover {
+  color: var(--db-text-link-hover);
+}
+
+.med-caption,
+.med-note-paragraph {
+  margin: 0;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Exceptions filter pills ---------- */
+
+.med-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.med-filter-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--db-border-strong);
+  border-radius: var(--db-radius-pill);
+  background: var(--db-surface-raised);
+  color: var(--db-text-secondary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.med-filter-btn-active {
+  background: var(--blu-900);
+  border-color: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+/* ---------- Tables ---------- */
+
+.med-table-scroll {
+  overflow-x: auto;
+}
+
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.med-table th,
+.med-table td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--db-border-subtle);
+  font-size: 13px;
+  color: var(--db-text-primary);
+  white-space: nowrap;
+}
+
+.med-table td {
+  white-space: normal;
+}
+
+.med-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.med-table th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--db-text-secondary);
+  white-space: nowrap;
+}
+
+.med-table-strong {
+  font-weight: 600;
+}
+
+.med-table-resident {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.med-text-error {
+  color: var(--db-status-error-ink);
+}
+
+.med-text-secondary {
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Pills (shared: exceptions, PRN, controlled, refills) ---------- */
+
+.med-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.med-pill-high {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+}
+.med-pill-med {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+}
+.med-pill-info {
+  background: var(--db-status-info-soft);
+  color: var(--db-status-info-ink);
+}
+.med-pill-ok {
+  background: var(--db-status-ok-soft);
+  color: var(--db-status-ok-ink);
+}
+.med-pill-neutral {
+  background: var(--ink-100);
+  color: var(--ink-600);
+}
+
+/* ---------- PRN effectiveness checks ---------- */
+
+.med-prn-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.med-prn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 60px;
+  border-bottom: 1px solid var(--db-border-subtle);
+  flex-wrap: wrap;
+}
+
+.med-prn-row:last-child {
+  border-bottom: none;
+}
+
+.med-prn-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.med-stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.med-stat-row-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.med-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.med-stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.med-stat-label {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Controlled substances / Refills shared list rows ---------- */
+
+.med-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.med-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--db-border-subtle);
+  flex-wrap: wrap;
+}
+
+.med-list-row:last-child {
+  border-bottom: none;
+}
+
+.med-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.med-list-sub {
+  font-size: 12px;
+}
+
+/* ---------- High-risk medications ---------- */
+
+.med-highrisk-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--db-border-subtle);
+  text-decoration: none;
+  color: inherit;
+}
+
+.med-highrisk-row:last-child {
+  border-bottom: none;
+}
+
+.med-highrisk-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--db-text-primary);
+}
+
+.med-highrisk-track {
+  height: 8px;
+  border-radius: 2px;
+  background: var(--ink-100);
+  overflow: hidden;
+}
+
+.med-highrisk-fill {
+  display: block;
+  height: 100%;
+  background: var(--blu-500);
+}
+
+.med-highrisk-fill-warn {
+  background: var(--db-status-warn);
+}
+
+.med-highrisk-note {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.med-highrisk-note-warn {
+  color: var(--db-status-warn-ink);
+}
+
+/* ---------- Refusals by time of pass ---------- */
+
+.med-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 160px;
+  border-bottom: 1px solid var(--db-border-strong);
+}
+
+.med-chart-bar-col {
+  flex: 1 1 0;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.med-chart-bar-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--db-text-primary);
+}
+
+.med-chart-bar {
+  width: 100%;
+  max-width: 48px;
+  border-radius: 2px 2px 0 0;
+  background: var(--blu-300);
+}
+
+.med-chart-bar-peak {
+  background: var(--blu-500);
+}
+
+.med-chart-labels {
+  display: flex;
+  gap: 12px;
+}
+
+.med-chart-label {
+  flex: 1 1 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Medication reports ---------- */
+
+.med-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.med-report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 6px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.med-report-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.med-report-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--db-text-secondary);
+}
+
+.med-report-cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--db-text-link);
+}
+
+/* ---------- Footer ---------- */
+
+.med-footer {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}

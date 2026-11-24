@@ -8,6 +8,7 @@ import { Occupancy } from './pages/Occupancy.tsx'
 import { RentRoll } from './pages/RentRoll.tsx'
 import { CareStaffShift } from './pages/CareStaffShift.tsx'
 import { CareStaffPhone } from './pages/CareStaffPhone.tsx'
+import { MedicationDashboard } from './pages/MedicationDashboard.tsx'
 import './App.css'
 
 // Icons ported verbatim from the deepBLU mockup (project/Main.dc.html),
@@ -84,6 +85,16 @@ function IconReports() {
     </svg>
   )
 }
+function IconChartingStaff() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <rect x="5" y="4" width="14" height="17" rx="1.5" />
+      <path d="M9 4V2.5h6V4" />
+      <path d="M9 11h6" />
+      <path d="M9 15h4" />
+    </svg>
+  )
+}
 
 export function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -92,6 +103,10 @@ export function App() {
   // CareStaff.dc.html, which has no left nav at all. The manager sidebar
   // below is skipped for this route rather than squeezed around it.
   const isCareStaffRoute = path.startsWith('/care-staff')
+  const isMedicationsRoute = path.startsWith('/medications')
+  // Everything else in the manager sidebar family is the Executive Dashboard
+  // (Today, Residents, Occupancy, Rent Roll all live under this one nav group).
+  const isExecutiveRoute = !isCareStaffRoute && !isMedicationsRoute
 
   return (
     <div id="app-shell" class={isCareStaffRoute ? 'app-shell-full' : undefined}>
@@ -108,39 +123,76 @@ export function App() {
           </div>
 
           <div class="db-nav-links">
-            <Link activeClassName="active" href="/">
-              <IconToday />
-              Today
-            </Link>
-            <a href="#">
-              <IconCensus />
-              Census &amp; occupancy
-            </a>
-            <a href="#">
-              <IconClinical />
-              Clinical
-            </a>
-            <a href="#">
-              <IconMedications />
-              Medications
-            </a>
-            <a href="#">
-              <IconStaffing />
-              Staffing
-            </a>
-            <a href="#">
-              <IconIncidents />
-              Incidents
-            </a>
-            <a href="#">
-              <IconSurvey />
-              Survey readiness
-            </a>
-            <a href="#">
+            <span class="db-nav-section-label">Dashboards</span>
+            <Link activeClassName="active" class={isExecutiveRoute ? 'active' : undefined} href="/">
               <IconReports />
-              Reports
-            </a>
+              Executive Dashboard
+            </Link>
+            <Link activeClassName="active" class={isMedicationsRoute ? 'active' : undefined} href="/medications">
+              <IconMedications />
+              MAR/Medication Dashboard
+            </Link>
+            <Link activeClassName="active" href="/care-staff">
+              <IconChartingStaff />
+              Charting Staff Dashboard
+            </Link>
           </div>
+
+          {isExecutiveRoute && (
+            <div class="db-nav-links">
+              <span class="db-nav-section-label">Executive view</span>
+              <Link activeClassName="active" href="/">
+                <IconToday />
+                Today
+              </Link>
+              <a href="#">
+                <IconCensus />
+                Census &amp; occupancy
+              </a>
+              <a href="#">
+                <IconClinical />
+                Clinical
+              </a>
+              <a href="#">
+                <IconMedications />
+                Medications
+              </a>
+              <Link href="/medications" class="db-nav-sublink">
+                <span class="db-nav-sublink-dot" aria-hidden="true" />
+                MAR
+              </Link>
+              <a href="#">
+                <IconStaffing />
+                Staffing
+              </a>
+              <a href="#">
+                <IconIncidents />
+                Incidents
+              </a>
+              <a href="#">
+                <IconSurvey />
+                Survey readiness
+              </a>
+              <a href="#">
+                <IconReports />
+                Reports
+              </a>
+            </div>
+          )}
+
+          {isMedicationsRoute && (
+            <div class="db-nav-links">
+              <span class="db-nav-section-label">Jump to</span>
+              <a href="#pass">Med pass now</a>
+              <a href="#flow">Order to administration</a>
+              <a href="#exceptions">Exceptions</a>
+              <a href="#prn">PRN follow-ups</a>
+              <a href="#controlled">Controlled substances</a>
+              <a href="#highrisk">High-risk meds</a>
+              <a href="#refills">Refills &amp; supply</a>
+              <a href="#reports">Medication reports</a>
+            </div>
+          )}
 
           <div class="db-nav-links db-nav-links-existing">
             <span class="db-nav-section-label">Existing reports</span>
@@ -174,6 +226,7 @@ export function App() {
           <Route path="/residents/:id" component={ResidentRecord} />
           <Route path="/occupancy" component={Occupancy} />
           <Route path="/rent-roll" component={RentRoll} />
+          <Route path="/medications" component={MedicationDashboard} />
           <Route path="/care-staff" component={CareStaffShift} />
           <Route path="/care-staff/phone" component={CareStaffPhone} />
         </Router>
