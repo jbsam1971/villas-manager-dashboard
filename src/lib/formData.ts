@@ -51,6 +51,39 @@ export function extractTextFromHtml(valueAsString: string | undefined): string[]
   return text.length > 0 ? [text] : []
 }
 
+interface OptionValue {
+  displayName?: string
+}
+
+function isOptionValue(value: unknown): value is OptionValue {
+  return typeof value === 'object' && value !== null && 'displayName' in value
+}
+
+/**
+ * Reads display text from an option/single-select/relationship field. For
+ * these fields `valueAsString` is NOT reliably a display label — confirmed
+ * live against Jen's Sandbox's Gender field, whose `valueAsString` is the raw
+ * option topId (e.g. `"1000013___340077"`) while `value.displayName` is the
+ * real label (`"Female"`); a multi-select field's `value` is an array of such
+ * objects (confirmed against a Role field holding several values), joined
+ * here with `, `. Falls back to `valueAsString` for a field whose `value`
+ * isn't an option object/array (a plain text, date, or number field), so this
+ * is safe to use in place of reading `valueAsString` directly on any field
+ * whose type isn't otherwise known in advance.
+ */
+export function getOptionText(field: FormEntryDataItem | undefined): string | null {
+  const value = field?.value
+  if (Array.isArray(value)) {
+    const names = value.filter(isOptionValue).map((v) => v.displayName).filter((n): n is string => Boolean(n))
+    return names.length > 0 ? names.join(', ') : null
+  }
+  if (isOptionValue(value)) {
+    return value.displayName ?? null
+  }
+  const fallback = field?.valueAsString
+  return fallback && fallback.trim() !== '' ? fallback : null
+}
+
 /**
  * Parses a pre-formatted money string such as `"$300.00"` or the accounting
  * negative form `"$(500.00)"` (meaning -$500.00 — confirmed against a real

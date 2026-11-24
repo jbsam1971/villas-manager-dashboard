@@ -12,7 +12,7 @@
 
 import { gql } from './gql.ts'
 import { DEMO_UNIT_ID, resolveResidentRecordTopIds } from './rooms.ts'
-import { getField, extractTextFromHtml, parseIntOrNull } from './formData.ts'
+import { getField, extractTextFromHtml, parseIntOrNull, getOptionText } from './formData.ts'
 import type { FormEntryDataItem } from './formData.ts'
 
 const CLIENT_INFO_FORM_ID = '1000001__FID_clientInfo'
@@ -157,12 +157,6 @@ interface ProfileQueryResponse {
   }
 }
 
-/** Treats an empty/missing valueAsString as null, never an empty string. */
-function stringOrNull(valueAsString: string | undefined): string | null {
-  if (!valueAsString) return null
-  return valueAsString.trim() === '' ? null : valueAsString
-}
-
 export interface Demographics {
   gender: string | null
   birthDate: string | null
@@ -230,11 +224,11 @@ export interface ResidentProfile {
 function parseDemographics(row: ProfileRow): Demographics {
   const data = row.formEntry.data
   return {
-    gender: stringOrNull(getField(data, LABEL_GENDER)?.valueAsString),
-    birthDate: stringOrNull(getField(data, LABEL_BIRTH_DATE)?.valueAsString),
-    religion: stringOrNull(getField(data, LABEL_RELIGION)?.valueAsString),
-    maritalStatus: stringOrNull(getField(data, LABEL_MARITAL_STATUS)?.valueAsString),
-    hospital: stringOrNull(getField(data, LABEL_HOSPITAL)?.valueAsString),
+    gender: getOptionText(getField(data, LABEL_GENDER)),
+    birthDate: getOptionText(getField(data, LABEL_BIRTH_DATE)),
+    religion: getOptionText(getField(data, LABEL_RELIGION)),
+    maritalStatus: getOptionText(getField(data, LABEL_MARITAL_STATUS)),
+    hospital: getOptionText(getField(data, LABEL_HOSPITAL)),
   }
 }
 
@@ -242,27 +236,27 @@ function parseAdmission(row: ProfileRow): AdmissionEntry {
   const data = row.formEntry.data
   return {
     dateTime: getField(data, LABEL_ADMISSION_DATE_TIME)?.valueAsString ?? '',
-    admissionType: stringOrNull(getField(data, LABEL_ADMISSION_TYPE)?.valueAsString),
+    admissionType: getOptionText(getField(data, LABEL_ADMISSION_TYPE)),
   }
 }
 
 function parseDiagnosis(row: ProfileRow): DiagnosisEntry {
   const data = row.formEntry.data
   return {
-    primaryDiagnosis: stringOrNull(getField(data, LABEL_PRIMARY_DIAGNOSIS)?.valueAsString),
-    diagnosis: stringOrNull(getField(data, LABEL_DIAGNOSIS)?.valueAsString),
-    start: stringOrNull(getField(data, LABEL_DIAGNOSIS_START)?.valueAsString),
-    end: stringOrNull(getField(data, LABEL_DIAGNOSIS_END)?.valueAsString),
+    primaryDiagnosis: getOptionText(getField(data, LABEL_PRIMARY_DIAGNOSIS)),
+    diagnosis: getOptionText(getField(data, LABEL_DIAGNOSIS)),
+    start: getOptionText(getField(data, LABEL_DIAGNOSIS_START)),
+    end: getOptionText(getField(data, LABEL_DIAGNOSIS_END)),
   }
 }
 
 function parseAllergy(row: ProfileRow): AllergyEntry {
   const data = row.formEntry.data
   return {
-    allergyType: stringOrNull(getField(data, LABEL_ALLERGY_TYPE)?.valueAsString),
-    allergyName: stringOrNull(getField(data, LABEL_ALLERGY_NAME)?.valueAsString),
-    onsetDate: stringOrNull(getField(data, LABEL_ALLERGY_ONSET_DATE)?.valueAsString),
-    severity: stringOrNull(getField(data, LABEL_ALLERGY_SEVERITY)?.valueAsString),
+    allergyType: getOptionText(getField(data, LABEL_ALLERGY_TYPE)),
+    allergyName: getOptionText(getField(data, LABEL_ALLERGY_NAME)),
+    onsetDate: getOptionText(getField(data, LABEL_ALLERGY_ONSET_DATE)),
+    severity: getOptionText(getField(data, LABEL_ALLERGY_SEVERITY)),
   }
 }
 
@@ -271,7 +265,7 @@ function parseProvider(row: ProfileRow): ProviderEntry {
   const providerField = getField(data, LABEL_PROVIDER)
   return {
     provider: extractTextFromHtml(providerField?.valueAsString)[0] ?? null,
-    role: stringOrNull(getField(data, LABEL_PROVIDER_ROLE)?.valueAsString),
+    role: getOptionText(getField(data, LABEL_PROVIDER_ROLE)),
   }
 }
 
@@ -279,13 +273,13 @@ function parseVitalSigns(row: ProfileRow): VitalSignsEntry {
   const data = row.formEntry.data
   return {
     dateTimeTaken: getField(data, LABEL_VITAL_DATE_TIME_TAKEN)?.valueAsString ?? '',
-    bloodPressure: stringOrNull(getField(data, LABEL_VITAL_BLOOD_PRESSURE)?.valueAsString),
-    respiratoryRate: stringOrNull(getField(data, LABEL_VITAL_RESPIRATORY_RATE)?.valueAsString),
-    heartRate: stringOrNull(getField(data, LABEL_VITAL_HEART_RATE)?.valueAsString),
-    temperature: stringOrNull(getField(data, LABEL_VITAL_TEMPERATURE)?.valueAsString),
-    weight: stringOrNull(getField(data, LABEL_VITAL_WEIGHT)?.valueAsString),
-    glucose: stringOrNull(getField(data, LABEL_VITAL_GLUCOSE)?.valueAsString),
-    o2Sats: stringOrNull(getField(data, LABEL_VITAL_O2_SATS)?.valueAsString),
+    bloodPressure: getOptionText(getField(data, LABEL_VITAL_BLOOD_PRESSURE)),
+    respiratoryRate: getOptionText(getField(data, LABEL_VITAL_RESPIRATORY_RATE)),
+    heartRate: getOptionText(getField(data, LABEL_VITAL_HEART_RATE)),
+    temperature: getOptionText(getField(data, LABEL_VITAL_TEMPERATURE)),
+    weight: getOptionText(getField(data, LABEL_VITAL_WEIGHT)),
+    glucose: getOptionText(getField(data, LABEL_VITAL_GLUCOSE)),
+    o2Sats: getOptionText(getField(data, LABEL_VITAL_O2_SATS)),
   }
 }
 
@@ -298,13 +292,13 @@ function parseContact(row: ProfileRow): ContactEntry {
 
   return {
     contactOrder,
-    fullName: stringOrNull(getField(data, LABEL_CONTACT_FULL_NAME)?.valueAsString),
-    homePhone: stringOrNull(getField(data, LABEL_CONTACT_HOME_PHONE)?.valueAsString),
-    cellPhone: stringOrNull(getField(data, LABEL_CONTACT_CELL_PHONE)?.valueAsString),
-    workPhone: stringOrNull(getField(data, LABEL_CONTACT_WORK_PHONE)?.valueAsString),
-    relationship: stringOrNull(getField(data, LABEL_CONTACT_RELATIONSHIP)?.valueAsString),
-    contactType: stringOrNull(getField(data, LABEL_CONTACT_TYPE)?.valueAsString),
-    email: stringOrNull(getField(data, LABEL_CONTACT_EMAIL)?.valueAsString),
+    fullName: getOptionText(getField(data, LABEL_CONTACT_FULL_NAME)),
+    homePhone: getOptionText(getField(data, LABEL_CONTACT_HOME_PHONE)),
+    cellPhone: getOptionText(getField(data, LABEL_CONTACT_CELL_PHONE)),
+    workPhone: getOptionText(getField(data, LABEL_CONTACT_WORK_PHONE)),
+    relationship: getOptionText(getField(data, LABEL_CONTACT_RELATIONSHIP)),
+    contactType: getOptionText(getField(data, LABEL_CONTACT_TYPE)),
+    email: getOptionText(getField(data, LABEL_CONTACT_EMAIL)),
   }
 }
 
