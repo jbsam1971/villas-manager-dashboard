@@ -1,14 +1,12 @@
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import { Link } from 'preact-router'
 import {
-  getCensusSummary,
   getOvernightSummary,
   getAttentionCards,
   getKpiTiles,
   getOccupancyWeeks,
   getUnitsBreakdown,
   getLeasingSummary,
-  getResidentsToWatch,
   getFallsHeatmap,
   getMedPassByShift,
   getStaffingToday,
@@ -18,14 +16,29 @@ import {
   getHospitalTransfers,
 } from '../lib/placeholders/morningHuddle.ts'
 import type { Tone } from '../lib/placeholders/morningHuddle.ts'
+import { fetchRooms } from '../lib/rooms.ts'
+import { fetchResidentsToWatch } from '../lib/residentWarnings.ts'
+import type { ResidentToWatch } from '../lib/residentWarnings.ts'
+import { GqlError } from '../lib/gql.ts'
+import { SignInPrompt } from '../components/SignInPrompt.tsx'
 import './Dashboard.css'
 
-// This page is a direct, sample-data port of the reviewed Design artifact
-// mockup (Direction A · deepBLU). No /gql call, no fetch, no useEffect: every
-// number below comes from src/lib/placeholders/morningHuddle.ts and is
-// rendered synchronously. When this is wired to real data, each
-// `get*()` call below gets swapped for a real fetch — the JSX shape should
-// not need to change.
+// Most of this page is still the sample-data port of the reviewed Design
+// artifact mockup (Direction A · deepBLU) — every number from
+// src/lib/placeholders/morningHuddle.ts is still rendered synchronously and
+// is clearly labeled sample data. Two pieces are now wired to real BlueStep
+// data (see the `useEffect` below): the resident count in the header, and
+// the "Residents to watch" panel, backed by BlueStep's own auto-generated
+// dashboard-warning entries (lib/residentWarnings.ts) — confirmed live
+// against Jen's Sandbox this session. Everything else (KPIs, occupancy
+// trend, units breakdown, falls heat map, med pass, staffing, survey
+// readiness, incidents, hospital transfers) still needs its own live
+// discovery pass before it can be wired for real — not assumed here.
+
+type RealDataState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string; code?: string }
+  | { status: 'ready'; occupiedRoomCount: number; totalRoomCount: number; residentsToWatch: ResidentToWatch[] }
 
 type RangeKey = 'today' | '7d' | '30d' | 'mtd'
 
@@ -81,15 +94,38 @@ function IconExport() {
 export function Dashboard() {
   const [range, setRange] = useState<RangeKey>('today')
   const [overnightVisible, setOvernightVisible] = useState(true)
+  const [realData, setRealData] = useState<RealDataState>({ status: 'loading' })
 
-  const census = getCensusSummary()
+  useEffect(() => {
+    let cancelled = false
+    setRealData({ status: 'loading' })
+
+    Promise.all([fetchRooms(), fetchResidentsToWatch()])
+      .then(([rooms, residentsToWatch]) => {
+        if (cancelled) return
+        const occupiedRoomCount = rooms.filter((room) => room.residentTopIds.length > 0).length
+        setRealData({ status: 'ready', occupiedRoomCount, totalRoomCount: rooms.length, residentsToWatch })
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return
+        setRealData({
+          status: 'error',
+          message: err instanceof Error ? err.message : String(err),
+          code: err instanceof GqlError ? err.code : undefined,
+        })
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const overnight = getOvernightSummary()
   const attentionCards = getAttentionCards()
   const kpiTiles = getKpiTiles()
   const { weeks, budgetPercent } = getOccupancyWeeks()
   const unitSegments = getUnitsBreakdown()
   const leasing = getLeasingSummary()
-  const residentsToWatch = getResidentsToWatch()
   const falls = getFallsHeatmap()
   const medPass = getMedPassByShift()
   const staffing = getStaffingToday()
@@ -100,16 +136,21 @@ export function Dashboard() {
 
   const unitsTotal = unitSegments.reduce((sum, seg) => sum + seg.count, 0)
   const budgetLinePercent = occupancyBarPercent(budgetPercent)
+  const todayLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
   return (
     <div class="mh-page">
       <header class="mh-header">
         <div class="mh-header-left">
-          <span class="mh-eyebrow">Manager's dashboard · sample data</span>
-          <h1 class="mh-title">{census.dateLabel}</h1>
+          <span class="mh-eyebrow">Manager's dashboard · some data is live, some is sample</span>
+          <h1 class="mh-title">{todayLabel}</h1>
           <p class="mh-census-line">
-            {census.residentsInBuilding} residents in the building · {census.onLeave} on leave · 1 pending move-in{' '}
-            {census.pendingMoveIn}
+            {realData.status === 'ready'
+              ? `${realData.occupiedRoomCount} of ${realData.totalRoomCount} units occupied`
+              : realData.status === 'error'
+                ? 'Could not load live resident count'
+                : 'Loading resident count…'}
+            {' · on-leave and move-in tracking not yet connected'}
           </p>
         </div>
         <div class="mh-header-right">
@@ -315,45 +356,61 @@ export function Dashboard() {
         <div class="mh-panel mh-panel--residents">
           <div class="mh-panel-header">
             <h2 class="mh-panel-title">Residents to watch</h2>
+            <span class="mh-panel-note">Live from BlueStep's dashboard warnings</span>
           </div>
-          <div class="mh-table-scroll">
-            <table class="mh-table">
-              <thead>
-                <tr>
-                  <th>Resident</th>
-                  <th>Room</th>
-                  <th>Care level</th>
-                  <th>Why they're flagged</th>
-                  <th>Last assessed</th>
-                  <th class="mh-visually-hidden">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {residentsToWatch.map((resident) => (
-                  <tr key={resident.name}>
-                    <td class="mh-table-strong">{resident.name}</td>
-                    <td>{resident.room}</td>
-                    <td>{resident.level}</td>
-                    <td>
-                      <div class="mh-chip-row">
-                        {resident.signals.map((signal) => (
-                          <span key={signal.text} class={pillClass(signal.tone)}>
-                            {signal.text}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td class={resident.overdue ? 'mh-text-error' : 'mh-text-secondary'}>{resident.last}</td>
-                    <td>
-                      <Link class="mh-panel-link" href="/residents">
-                        Open chart
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {realData.status === 'loading' && <p class="mh-survey-note" style={{ padding: '0 24px 24px' }}>Loading…</p>}
+          {realData.status === 'error' &&
+            (realData.code === 'UNAUTHENTICATED' ? (
+              <div style={{ padding: '0 24px 24px' }}>
+                <SignInPrompt />
+              </div>
+            ) : (
+              <p class="mh-survey-note" style={{ padding: '0 24px 24px' }}>Could not load: {realData.message}</p>
+            ))}
+          {realData.status === 'ready' && (
+            <div class="mh-table-scroll">
+              {realData.residentsToWatch.length === 0 ? (
+                <p class="mh-survey-note" style={{ padding: '0 24px 24px' }}>No residents currently flagged.</p>
+              ) : (
+                <table class="mh-table">
+                  <thead>
+                    <tr>
+                      <th>Resident</th>
+                      <th>Room</th>
+                      <th>Why they're flagged</th>
+                      <th>Most recent warning</th>
+                      <th class="mh-visually-hidden">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {realData.residentsToWatch.map((resident) => (
+                      <tr key={resident.residentTopId}>
+                        <td class="mh-table-strong">{resident.name}</td>
+                        <td>{resident.room}</td>
+                        <td>
+                          <div class="mh-chip-row">
+                            {resident.signals.map((signal, i) => (
+                              <span key={`${signal}-${i}`} class={pillClass('info')}>
+                                {signal}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td class={resident.overdue ? 'mh-text-error' : 'mh-text-secondary'}>
+                          {resident.lastWarningDate ?? '—'}
+                        </td>
+                        <td>
+                          <Link class="mh-panel-link" href={`/residents/${resident.residentTopId}`}>
+                            Open chart
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
         </div>
 
         <div class="mh-panel mh-panel--falls">
@@ -583,7 +640,10 @@ export function Dashboard() {
         </div>
       </div>
 
-      <p class="mh-footer">Sample data for design review. Each number links to the record it was counted from.</p>
+      <p class="mh-footer">
+        "Residents to watch" and the resident count above are live from BlueStep. Everything else on this page is
+        still sample data for design review.
+      </p>
     </div>
   )
 }
