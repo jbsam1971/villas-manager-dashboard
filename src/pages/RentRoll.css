@@ -1,0 +1,54 @@
+.rent-roll-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rent-roll-error {
+  color: #c0392b;
+}
+
+.rent-roll-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rent-roll-table th,
+.rent-roll-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.rent-roll-table th {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.rent-roll-no-charges {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.rent-roll-charge-list {
+  margin: 0;
+  padding: 0 0 0 16px;
+}
+
+.rent-roll-charge-list + .rent-roll-charge-list {
+  margin-top: 6px;
+}
+
+.rent-roll-grand-total-label {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-h);
+  border-bottom: none;
+}
+
+.rent-roll-grand-total-value {
+  font-weight: 600;
+  color: var(--text-h);
+  border-bottom: none;
+}
