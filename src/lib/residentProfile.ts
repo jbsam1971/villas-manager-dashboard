@@ -48,7 +48,10 @@ const ADMISSIONS_FIELD_IDS = [
   '1000101__GID_2203232', // Admission Type
 ]
 
-// Diagnoses (multi-entry)
+// Diagnoses (multi-entry). "Primary Diagnosis" is a genuine BOOLEAN flag
+// (confirmed live: `value: true`/`null`, never a diagnosis name) — not text,
+// despite its name. "Diagnosis" is the real diagnosis-name field (plain
+// text, e.g. "Insomnia", "High blood pressure").
 const LABEL_PRIMARY_DIAGNOSIS = 'Primary Diagnosis'
 const LABEL_DIAGNOSIS = 'Diagnosis'
 const LABEL_DIAGNOSIS_START = 'Start'
@@ -62,14 +65,17 @@ const DIAGNOSES_FIELD_IDS = [
   '1000101__GID_2565345', // End (Display & Edit)
 ]
 
-// Allergies (multi-entry)
-const LABEL_ALLERGY_TYPE = 'Allergy Type'
+// Allergies (multi-entry). The "Allergy Type" field (`1000101___2785382`) is
+// also a genuine BOOLEAN (confirmed live: `value: false`, not a category
+// label like "Drug"/"Environmental") — its real-world meaning wasn't
+// confirmed (would need checking the field's own label/config on the
+// platform), so it is deliberately NOT fetched or shown here rather than
+// guessed at.
 const LABEL_ALLERGY_NAME = 'Allergy Name'
 const LABEL_ALLERGY_ONSET_DATE = 'Onset Date'
 const LABEL_ALLERGY_SEVERITY = 'Severity'
 
 const ALLERGIES_FIELD_IDS = [
-  '1000101___2785382', // Allergy Type
   '1000101__GID_2785386', // Allergy Name
   '1000101__GID_2785387', // Onset Date
   '1000101__GID_2785388', // Severity
@@ -171,14 +177,14 @@ export interface AdmissionEntry {
 }
 
 export interface DiagnosisEntry {
-  primaryDiagnosis: string | null
   diagnosis: string | null
+  /** From the "Primary Diagnosis" checkbox — confirmed live to be a real boolean, not text. */
+  isPrimary: boolean
   start: string | null
   end: string | null
 }
 
 export interface AllergyEntry {
-  allergyType: string | null
   allergyName: string | null
   onsetDate: string | null
   severity: string | null
@@ -243,8 +249,8 @@ function parseAdmission(row: ProfileRow): AdmissionEntry {
 function parseDiagnosis(row: ProfileRow): DiagnosisEntry {
   const data = row.formEntry.data
   return {
-    primaryDiagnosis: getOptionText(getField(data, LABEL_PRIMARY_DIAGNOSIS)),
     diagnosis: getOptionText(getField(data, LABEL_DIAGNOSIS)),
+    isPrimary: getField(data, LABEL_PRIMARY_DIAGNOSIS)?.value === true,
     start: getOptionText(getField(data, LABEL_DIAGNOSIS_START)),
     end: getOptionText(getField(data, LABEL_DIAGNOSIS_END)),
   }
@@ -253,7 +259,6 @@ function parseDiagnosis(row: ProfileRow): DiagnosisEntry {
 function parseAllergy(row: ProfileRow): AllergyEntry {
   const data = row.formEntry.data
   return {
-    allergyType: getOptionText(getField(data, LABEL_ALLERGY_TYPE)),
     allergyName: getOptionText(getField(data, LABEL_ALLERGY_NAME)),
     onsetDate: getOptionText(getField(data, LABEL_ALLERGY_ONSET_DATE)),
     severity: getOptionText(getField(data, LABEL_ALLERGY_SEVERITY)),

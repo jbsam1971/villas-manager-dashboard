@@ -104,12 +104,7 @@ function AllergiesSection({ allergies }: { allergies: AllergyEntry[] }) {
         <li key={i}>
           {a.allergyName && <span class="resident-record-entry-primary">{a.allergyName}</span>}
           {a.severity && <span class="resident-record-severity-pill">{a.severity}</span>}
-          <EntryDetails
-            details={[
-              { label: 'Type', value: a.allergyType },
-              { label: 'Onset', value: a.onsetDate },
-            ]}
-          />
+          <EntryDetails details={[{ label: 'Onset', value: a.onsetDate }]} />
         </li>
       ))}
     </ul>
@@ -287,7 +282,7 @@ export function ResidentRecord({ id }: { id?: string }) {
         <EntryList
           items={profile.diagnoses.map((d, i) => ({
             key: i,
-            primary: d.primaryDiagnosis ?? d.diagnosis,
+            primary: d.diagnosis ? (d.isPrimary ? `${d.diagnosis} (Primary)` : d.diagnosis) : null,
             details: [
               { label: 'Start', value: d.start },
               { label: 'End', value: d.end },
