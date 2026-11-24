@@ -1,0 +1,60 @@
+.resident-record-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+}
+
+.resident-record-error {
+  color: #c0392b;
+}
+
+.resident-record-header-card,
+.resident-record-billing-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+}
+
+.resident-record-name {
+  margin: 0 0 4px;
+  font-size: 1.6em;
+  color: var(--text-h);
+}
+
+.resident-record-meta {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.resident-record-billing-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.1em;
+  color: var(--text-h);
+}
+
+.resident-record-charges {
+  margin-bottom: 16px;
+}
+
+.resident-record-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--accent-bg);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.resident-record-not-found {
+  color: var(--text-muted);
+}
+
+.resident-record-back-link {
+  color: inherit;
+  font-weight: 600;
+}

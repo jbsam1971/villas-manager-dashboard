@@ -131,6 +131,7 @@ function groupByResident<T extends { residentTopId: string }>(items: T[]): Map<s
 
 export interface ResidentBilling {
   key: string
+  residentTopId: string
   roomName: string
   residentName: string
   activeRecurringCharges: RecurringCharge[]
@@ -165,6 +166,7 @@ function buildResidentBillings(
 
         billings.push({
           key: `${room.key}-${topId}`,
+          residentTopId: topId,
           roomName: room.roomName,
           residentName,
           activeRecurringCharges,

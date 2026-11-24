@@ -4,6 +4,7 @@ import type { ResidentBilling } from '../lib/billing.ts'
 import { formatMoney } from '../lib/formData.ts'
 import { GqlError } from '../lib/gql.ts'
 import { SignInPrompt } from '../components/SignInPrompt.tsx'
+import { ChargeBreakdown } from '../components/ChargeBreakdown.tsx'
 import './RentRoll.css'
 
 type LoadState =
@@ -87,32 +88,12 @@ export function RentRoll() {
           </thead>
           <tbody>
             {billings.map((billing) => {
-              const hasCharges = billing.activeRecurringCharges.length > 0 || billing.ancillaryCharges.length > 0
-
               return (
                 <tr key={billing.key}>
                   <td>{billing.roomName}</td>
                   <td>{billing.residentName}</td>
                   <td>
-                    {!hasCharges && <span class="rent-roll-no-charges">No charges recorded</span>}
-                    {billing.activeRecurringCharges.length > 0 && (
-                      <ul class="rent-roll-charge-list">
-                        {billing.activeRecurringCharges.map((charge, i) => (
-                          <li key={`recurring-${i}`}>
-                            {charge.chargeName} — {formatMoney(charge.cost)}/mo
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {billing.ancillaryCharges.length > 0 && (
-                      <ul class="rent-roll-charge-list">
-                        {billing.ancillaryCharges.map((charge, i) => (
-                          <li key={`ancillary-${i}`}>
-                            {charge.chargeName} ({charge.date}) — {formatMoney(charge.cost)}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <ChargeBreakdown billing={billing} />
                   </td>
                   <td>{formatMoney(billing.total)}</td>
                 </tr>

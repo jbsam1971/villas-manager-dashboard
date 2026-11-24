@@ -100,6 +100,14 @@ export function compareRoomNamesNaturally(a: string, b: string): number {
   return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
 }
 
+export function formatBeds(room: Room): string {
+  const { numberOfBeds, openBeds } = room
+  if (numberOfBeds === null && openBeds === null) return 'Bed count unavailable'
+  if (numberOfBeds === null) return `${openBeds} bed(s) open`
+  if (openBeds === null) return `? of ${numberOfBeds} beds open`
+  return `${openBeds} of ${numberOfBeds} beds open`
+}
+
 /** Fetches every room in the Demo Unit community, parsed and naturally sorted by room name. */
 export async function fetchRooms(): Promise<Room[]> {
   const data = await gql<RoomsQueryResponse>(ROOMS_QUERY, {

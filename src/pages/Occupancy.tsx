@@ -1,17 +1,9 @@
 import { useEffect, useState } from 'preact/hooks'
-import { fetchRooms } from '../lib/rooms.ts'
+import { fetchRooms, formatBeds } from '../lib/rooms.ts'
 import type { Room } from '../lib/rooms.ts'
 import { GqlError } from '../lib/gql.ts'
 import { SignInPrompt } from '../components/SignInPrompt.tsx'
 import './Occupancy.css'
-
-function formatBeds(room: Room): string {
-  const { numberOfBeds, openBeds } = room
-  if (numberOfBeds === null && openBeds === null) return 'Bed count unavailable'
-  if (numberOfBeds === null) return `${openBeds} bed(s) open`
-  if (openBeds === null) return `? of ${numberOfBeds} beds open`
-  return `${openBeds} of ${numberOfBeds} beds open`
-}
 
 type LoadState =
   | { status: 'loading' }

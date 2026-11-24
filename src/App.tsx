@@ -1,5 +1,7 @@
 import { Router, Route, Link } from 'preact-router'
 import { Dashboard } from './pages/Dashboard.tsx'
+import { Residents } from './pages/Residents.tsx'
+import { ResidentRecord } from './pages/ResidentRecord.tsx'
 import { Occupancy } from './pages/Occupancy.tsx'
 import { RentRoll } from './pages/RentRoll.tsx'
 import './App.css'
@@ -16,6 +18,9 @@ export function App() {
           <Link activeClassName="active" href="/">
             Dashboard
           </Link>
+          <Link activeClassName="active" href="/residents">
+            Residents
+          </Link>
           <Link activeClassName="active" href="/occupancy">
             Occupancy
           </Link>
@@ -27,6 +32,8 @@ export function App() {
       <main class="page">
         <Router>
           <Route path="/" component={Dashboard} />
+          <Route path="/residents" component={Residents} />
+          <Route path="/residents/:id" component={ResidentRecord} />
           <Route path="/occupancy" component={Occupancy} />
           <Route path="/rent-roll" component={RentRoll} />
         </Router>
