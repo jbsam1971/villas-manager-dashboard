@@ -8,7 +8,7 @@ export function App() {
   return (
     <div id="app-shell">
       <header class="nav">
-        <span class="nav-brand">The Villas — Manager Dashboard</span>
+        <span class="nav-brand">Manager Dashboard</span>
         <nav>
           <Link activeClassName="active" href="/">
             Dashboard
