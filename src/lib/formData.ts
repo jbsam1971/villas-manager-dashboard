@@ -32,6 +32,20 @@ export function parseBooleanOrNull(value: unknown): boolean | null {
 }
 
 /**
+ * Strips HTML markup from a string the same safe way for every form: build a
+ * detached element, read `.textContent`, never render the HTML string
+ * directly. Shared by `extractTextFromHtml` (valueAsString HTML) and
+ * `getOptionText` (an option's displayName can itself contain markup —
+ * confirmed live: a "Type of Contact" option's displayName was literally
+ * `<FONT color=red>Emergency contact</FONT>`, not plain text).
+ */
+function stripHtml(html: string): string {
+  const container = document.createElement('div')
+  container.innerHTML = html
+  return container.textContent?.trim() ?? ''
+}
+
+/**
  * Extracts real display text out of a relationship/rich-text field's
  * `valueAsString` HTML (e.g. link text), the same safe way for every form:
  * build a detached element, read `.textContent`, never render the HTML
@@ -66,19 +80,25 @@ function isOptionValue(value: unknown): value is OptionValue {
  * option topId (e.g. `"1000013___340077"`) while `value.displayName` is the
  * real label (`"Female"`); a multi-select field's `value` is an array of such
  * objects (confirmed against a Role field holding several values), joined
- * here with `, `. Falls back to `valueAsString` for a field whose `value`
- * isn't an option object/array (a plain text, date, or number field), so this
- * is safe to use in place of reading `valueAsString` directly on any field
- * whose type isn't otherwise known in advance.
+ * here with `, `. Each `displayName` is passed through `stripHtml` — some
+ * options' displayName is itself HTML (confirmed live, see `stripHtml`'s doc
+ * comment), never rendered raw. Falls back to `valueAsString` for a field
+ * whose `value` isn't an option object/array (a plain text, date, or number
+ * field), so this is safe to use in place of reading `valueAsString` directly
+ * on any field whose type isn't otherwise known in advance.
  */
 export function getOptionText(field: FormEntryDataItem | undefined): string | null {
   const value = field?.value
   if (Array.isArray(value)) {
-    const names = value.filter(isOptionValue).map((v) => v.displayName).filter((n): n is string => Boolean(n))
+    const names = value
+      .filter(isOptionValue)
+      .map((v) => (v.displayName ? stripHtml(v.displayName) : ''))
+      .filter((name) => name.length > 0)
     return names.length > 0 ? names.join(', ') : null
   }
   if (isOptionValue(value)) {
-    return value.displayName ?? null
+    const text = value.displayName ? stripHtml(value.displayName) : ''
+    return text.length > 0 ? text : null
   }
   const fallback = field?.valueAsString
   return fallback && fallback.trim() !== '' ? fallback : null
