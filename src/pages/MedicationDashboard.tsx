@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks'
+import { Link } from 'preact-router'
 import {
   getMedDashboardHeader,
   getMedPassNow,
@@ -144,9 +145,9 @@ export function MedicationDashboard() {
             <span class="med-visually-hidden">Find a resident or medication</span>
             <input type="search" placeholder="Resident or medication" />
           </label>
-          <a href="#" class="med-btn med-btn-primary">
+          <Link href="/mar" class="med-btn med-btn-primary">
             Open eMAR
-          </a>
+          </Link>
         </div>
       </header>
 

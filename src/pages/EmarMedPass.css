@@ -1,0 +1,1029 @@
+/*
+ * eMAR · med pass and monthly MAR — direct port of the reviewed Design
+ * artifact mockup (project/MAR.dc.html). Pure sample-data page: see
+ * src/pages/EmarMedPass.tsx. `emar-*` prefix keeps this page's classes
+ * distinct from every other page's prefix in this app.
+ *
+ * Deviation from other pages: the reference mockup is a light-background
+ * clinical workflow screen with its own hardcoded hex palette (not the dark
+ * manager-dashboard chrome). Every one of those hex values is mapped below
+ * to the nearest existing deepBLU token instead of being hardcoded again:
+ *
+ *   #071b33 (header/rights-panel bg)   -> --blu-900
+ *   #18202b (primary text)             -> --db-text-primary
+ *   #3e4a59 (secondary text)           -> --db-text-secondary
+ *   #5c6877 (muted text)               -> --db-text-muted
+ *   #d9dfe7 (strong border)            -> --db-border-strong
+ *   #e9eef4 (subtle border/panel bg)   -> --db-border-subtle / --ink-100
+ *   #f5f7fa (page background)          -> --db-surface-base
+ *   #1267ff (primary action blue)      -> --blu-500
+ *   #0f52d6 (link/hover blue)          -> --blu-600
+ *   #deeaff (info-soft blue)           -> --blu-100
+ *   #36d7e5 (sync/cyan accent)         -> --cyan-500
+ *   #fbe3e4 / #8f1d22 (risk/red)       -> --db-status-error-soft / --db-status-error-ink
+ *   #faefd9 / #6e4607 (warn/amber)     -> --db-status-warn-soft / --db-status-warn-ink
+ *   #dff3e8 / #155c39 (success/green)  -> --db-status-ok-soft / --db-status-ok-ink
+ *   #eef4ff (info-soft panel)          -> --db-status-info-soft (falls back to --blu-050)
+ *   controlled-substance pill          -> --blu-900 bg / --db-text-inverse (dark/inverse, per spec)
+ *
+ * No gradients, no emoji, no colored left-border cards.
+ */
+
+.emar-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  font-family: var(--font-ui);
+  background: var(--db-surface-base);
+  color: var(--db-text-primary);
+}
+
+/* ---------- Header ---------- */
+
+.emar-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  padding: 14px 24px;
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.emar-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.emar-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--db-text-inverse);
+}
+
+.emar-header-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.emar-pass-line {
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-pass-track {
+  height: 8px;
+  border-radius: 2px;
+  background: var(--blu-800);
+  overflow: hidden;
+}
+
+.emar-pass-fill {
+  display: block;
+  height: 100%;
+  background: var(--cyan-500);
+}
+
+.emar-header-sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--db-text-inverse-secondary);
+  flex: 1 1 200px;
+}
+
+.emar-sync-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--cyan-500);
+  box-shadow: 0 0 12px rgba(54, 215, 229, 0.42);
+}
+
+.emar-header-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+/* ---------- Shared buttons ---------- */
+
+.emar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--db-radius-control);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+}
+
+.emar-btn-outline-dark {
+  background: transparent;
+  color: var(--db-text-inverse);
+  border-color: var(--db-border-deep-strong);
+}
+
+.emar-btn-outline {
+  background: var(--db-surface-raised);
+  color: var(--db-text-primary);
+  border-color: var(--db-border-strong);
+  min-height: 52px;
+  padding: 0 18px;
+}
+
+.emar-btn-give {
+  background: var(--blu-500);
+  color: var(--db-text-inverse);
+  border-color: var(--blu-500);
+  min-height: 52px;
+  padding: 0 18px;
+}
+
+.emar-btn-give:disabled {
+  background: var(--ink-200);
+  border-color: var(--ink-200);
+  color: var(--db-text-muted);
+  cursor: not-allowed;
+}
+
+.emar-btn-disabled {
+  background: var(--ink-100);
+  color: var(--db-text-muted);
+  border-color: var(--db-border-subtle);
+  min-height: 52px;
+  padding: 0 18px;
+  cursor: not-allowed;
+}
+
+/* ---------- Body layout ---------- */
+
+.emar-body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+/* ---------- Aside: Due this pass ---------- */
+
+.emar-aside {
+  flex: 1 1 270px;
+  background: var(--db-surface-raised);
+  border-right: 1px solid var(--db-border-subtle);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emar-aside-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.emar-aside-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--db-text-secondary);
+}
+
+.emar-aside-sub {
+  font-size: 12px;
+  color: var(--db-text-muted);
+}
+
+.emar-resident-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emar-resident-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--db-radius-panel);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+
+.emar-resident-row-selected {
+  background: var(--blu-050);
+  border-color: var(--blu-300);
+}
+
+.emar-resident-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--blu-100);
+  color: var(--blu-600);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.emar-resident-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.emar-resident-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.emar-resident-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--db-text-primary);
+}
+
+.emar-resident-room {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-resident-status {
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.emar-resident-status-ok {
+  color: var(--db-status-ok-ink);
+  font-weight: 600;
+}
+
+.emar-resident-late {
+  color: var(--db-status-error-ink);
+  font-weight: 600;
+}
+
+.emar-aside-caption {
+  margin: 8px 8px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--db-text-muted);
+}
+
+/* ---------- Main column ---------- */
+
+.emar-main {
+  flex: 999 1 600px;
+  padding: 20px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ---------- Resident header panel ---------- */
+
+.emar-resident-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 18px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-photo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--ink-100);
+  border: 1px solid var(--db-border-strong);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-photo-initials {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--db-text-secondary);
+}
+
+.emar-photo-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--db-text-muted);
+}
+
+.emar-resident-id {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.emar-resident-fullname {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--db-text-primary);
+}
+
+.emar-resident-meta {
+  margin: 0;
+  font-size: 14px;
+  color: var(--db-text-secondary);
+}
+
+.emar-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.emar-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.emar-pill-allergy {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+  font-weight: 700;
+}
+
+.emar-pill-neutral {
+  background: var(--ink-100);
+  color: var(--ink-600);
+}
+
+.emar-resident-alerts {
+  margin: 0;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-vitals-box {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: var(--db-radius-panel);
+  background: var(--ink-100);
+  border: 1px solid var(--db-border-subtle);
+}
+
+.emar-vitals-box-warn {
+  background: var(--db-status-warn-soft);
+  border-color: color-mix(in srgb, var(--db-status-warn) 45%, transparent);
+}
+
+.emar-vitals-line {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.emar-vitals-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Tabs ---------- */
+
+.emar-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--db-border-subtle);
+}
+
+.emar-tab {
+  min-height: 44px;
+  padding: 0 4px;
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--db-text-secondary);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.emar-tab-active {
+  color: var(--blu-600);
+  border-bottom-color: var(--blu-500);
+}
+
+/* ---------- Rights-check panel ---------- */
+
+.emar-rights-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-rights-headline {
+  margin: 0;
+  font-size: 15px;
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-rights-headline strong {
+  color: var(--db-text-inverse);
+}
+
+.emar-scan-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--db-border-deep-strong);
+  border-radius: var(--db-radius-control);
+  background: var(--blu-850);
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-scan-input input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  color: var(--db-text-inverse);
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.emar-scan-input input::placeholder {
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-scan-input input:focus-visible {
+  outline: 2px solid var(--cyan-500);
+  outline-offset: 2px;
+}
+
+.emar-rights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.emar-rights-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--db-radius-control);
+  background: var(--blu-850);
+}
+
+.emar-rights-tile-warn {
+  background: color-mix(in srgb, var(--db-status-warn) 28%, var(--blu-850));
+}
+
+.emar-rights-tile-body {
+  min-width: 0;
+}
+
+.emar-rights-tile-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--db-text-inverse-secondary);
+}
+
+.emar-rights-tile-note {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--db-text-inverse);
+}
+
+.emar-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  border-radius: 999px;
+  border: 1.5px solid var(--db-border-deep-strong);
+  color: var(--db-text-inverse);
+}
+
+.emar-mark-checked {
+  background: var(--cyan-500);
+  border-color: var(--cyan-500);
+  color: var(--blu-900);
+}
+
+/* ---------- Scheduled meds ---------- */
+
+.emar-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.emar-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.emar-section-note {
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-med-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.emar-med-card {
+  padding: 16px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-med-open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.emar-med-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.emar-med-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--db-text-primary);
+}
+
+.emar-med-dose {
+  font-weight: 500;
+  color: var(--db-text-secondary);
+}
+
+.emar-med-sig {
+  margin: 0;
+  font-size: 14px;
+  color: var(--db-text-primary);
+}
+
+.emar-med-reason {
+  margin: 0;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-flag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.emar-flag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: var(--db-radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.emar-flag-risk {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+}
+
+.emar-flag-warn {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+}
+
+.emar-flag-cs {
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.emar-flag-neutral {
+  background: var(--db-status-info-soft, var(--blu-050));
+  color: var(--blu-600);
+}
+
+.emar-med-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.emar-reason-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--db-border-subtle);
+}
+
+.emar-reason-chip {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--db-radius-pill);
+  border: 1px solid var(--db-border-strong);
+  background: var(--db-surface-raised);
+  color: var(--db-text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.emar-reason-chip:hover {
+  background: var(--blu-050);
+  border-color: var(--blu-300);
+}
+
+.emar-med-charted {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.emar-med-charted-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emar-status-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: var(--db-radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.emar-status-pill-given {
+  background: var(--db-status-ok-soft);
+  color: var(--db-status-ok-ink);
+}
+
+.emar-status-pill-refused {
+  background: var(--blu-050);
+  color: var(--blu-600);
+}
+
+.emar-status-pill-held {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+}
+
+.emar-med-signed {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.emar-undo-btn {
+  min-height: 44px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: var(--blu-600);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------- PRN ---------- */
+
+.emar-prn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emar-prn-empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-prn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emar-prn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--db-surface-raised);
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-prn-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.emar-prn-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--db-text-primary);
+}
+
+.emar-prn-dose {
+  font-weight: 500;
+  color: var(--db-text-secondary);
+}
+
+.emar-prn-sig {
+  margin: 0;
+  font-size: 13px;
+  color: var(--db-text-secondary);
+}
+
+.emar-prn-last {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.emar-prn-last-ok {
+  color: var(--db-status-ok-ink);
+}
+
+.emar-prn-last-wait {
+  color: var(--db-text-muted);
+}
+
+/* ---------- Footer row / page footer ---------- */
+
+.emar-footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.emar-disclaimer {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+  max-width: 60ch;
+}
+
+.emar-page-footer {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+/* ---------- Monthly MAR ---------- */
+
+.emar-mar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emar-mar-caption {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--db-text-primary);
+}
+
+.emar-mar-legend {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.emar-mar-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--db-border-subtle);
+  border-radius: var(--db-radius-panel);
+}
+
+.emar-mar-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+
+.emar-mar-corner,
+.emar-mar-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--db-surface-raised);
+  text-align: left;
+  white-space: nowrap;
+  padding: 8px 12px;
+  border-right: 1px solid var(--db-border-strong);
+  border-bottom: 1px solid var(--db-border-subtle);
+  font-weight: 600;
+  color: var(--db-text-primary);
+}
+
+.emar-mar-corner {
+  z-index: 2;
+  background: var(--ink-100);
+}
+
+.emar-mar-daynum {
+  min-width: 30px;
+  padding: 8px 4px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--db-text-secondary);
+  background: var(--ink-100);
+  border-bottom: 1px solid var(--db-border-subtle);
+}
+
+.emar-mar-daynum-today {
+  background: var(--blu-900);
+  color: var(--db-text-inverse);
+}
+
+.emar-mar-cell {
+  min-width: 30px;
+  height: 36px;
+  text-align: center;
+  color: var(--db-text-primary);
+  border-bottom: 1px solid var(--db-border-subtle);
+  border-left: 1px solid var(--db-border-subtle);
+}
+
+.emar-mar-cell-refused {
+  background: var(--blu-050);
+  color: var(--blu-600);
+  font-weight: 600;
+}
+
+.emar-mar-cell-held {
+  background: var(--db-status-warn-soft);
+  color: var(--db-status-warn-ink);
+  font-weight: 600;
+}
+
+.emar-mar-cell-missed {
+  background: var(--db-status-error-soft);
+  color: var(--db-status-error-ink);
+  font-weight: 600;
+}
+
+.emar-mar-cell-future {
+  opacity: 0.4;
+}
+
+.emar-mar-cell-today {
+  box-shadow: inset 0 0 0 2px var(--blu-500);
+}
+
+.emar-mar-signature {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.emar-mar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.emar-mar-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blu-600);
+  text-decoration: none;
+}
+
+.emar-mar-links a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Accessibility helper ---------- */
+
+.emar-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

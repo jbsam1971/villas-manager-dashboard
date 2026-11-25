@@ -9,6 +9,7 @@ import { RentRoll } from './pages/RentRoll.tsx'
 import { CareStaffShift } from './pages/CareStaffShift.tsx'
 import { CareStaffPhone } from './pages/CareStaffPhone.tsx'
 import { MedicationDashboard } from './pages/MedicationDashboard.tsx'
+import { EmarMedPass } from './pages/EmarMedPass.tsx'
 import './App.css'
 
 // Icons ported verbatim from the deepBLU mockup (project/Main.dc.html),
@@ -104,13 +105,17 @@ export function App() {
   // below is skipped for this route rather than squeezed around it.
   const isCareStaffRoute = path.startsWith('/care-staff')
   const isMedicationsRoute = path.startsWith('/medications')
+  // The eMAR med-pass workflow is also full-bleed/no-sidebar, same reasoning
+  // as Care Staff — it's a clinical charting tool, not a dashboard panel.
+  const isMarRoute = path.startsWith('/mar')
+  const isFullBleedRoute = isCareStaffRoute || isMarRoute
   // Everything else in the manager sidebar family is the Executive Dashboard
   // (Today, Residents, Occupancy, Rent Roll all live under this one nav group).
-  const isExecutiveRoute = !isCareStaffRoute && !isMedicationsRoute
+  const isExecutiveRoute = !isFullBleedRoute && !isMedicationsRoute
 
   return (
-    <div id="app-shell" class={isCareStaffRoute ? 'app-shell-full' : undefined}>
-      {!isCareStaffRoute && (
+    <div id="app-shell" class={isFullBleedRoute ? 'app-shell-full' : undefined}>
+      {!isFullBleedRoute && (
         <nav class="db-nav" aria-label="Dashboard sections">
           <div class="db-nav-brand">
             <div class="db-nav-logo" aria-label="Community logo">
@@ -157,7 +162,7 @@ export function App() {
                 <IconMedications />
                 Medications
               </a>
-              <Link href="/medications" class="db-nav-sublink">
+              <Link href="/mar" class="db-nav-sublink">
                 <span class="db-nav-sublink-dot" aria-hidden="true" />
                 MAR
               </Link>
@@ -219,7 +224,7 @@ export function App() {
           </div>
         </nav>
       )}
-      <main class={isCareStaffRoute ? 'page page-full' : 'page'}>
+      <main class={isFullBleedRoute ? 'page page-full' : 'page'}>
         <Router onChange={(e: RouterOnChangeArgs) => setPath(e.url)}>
           <Route path="/" component={Dashboard} />
           <Route path="/residents" component={Residents} />
@@ -227,6 +232,7 @@ export function App() {
           <Route path="/occupancy" component={Occupancy} />
           <Route path="/rent-roll" component={RentRoll} />
           <Route path="/medications" component={MedicationDashboard} />
+          <Route path="/mar" component={EmarMedPass} />
           <Route path="/care-staff" component={CareStaffShift} />
           <Route path="/care-staff/phone" component={CareStaffPhone} />
         </Router>
