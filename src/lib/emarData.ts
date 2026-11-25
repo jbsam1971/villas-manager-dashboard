@@ -403,21 +403,29 @@ export async function fetchTodaysMedPass(): Promise<TodaysMedPassResult> {
  *   - "Nurse instruction"       -> "Med on hold" (directed hold)
  *   - "Out of stock"            -> "Medication unavailable" (exact fit)
  *   - "Resident away"           -> "Absent" (exact real option)
- *   - "Other" (either kind)     -> "Other" */
+ *   - "Other" (either kind)     -> "Other"
+ *
+ *  IMPORTANT: a SINGLE_OPTION_LIST field is NOT written with its display label — confirmed live
+ *  the hard way: writing the plain label "Refused" was silently ignored (the mutation reported
+ *  success and Date/Time Administered/Notes saved, but Exception stayed null — no error surfaced,
+ *  so this is easy to miss). The real write value is the option's short EXPORT CODE, found via
+ *  `remoteObjects(ids: [fieldId]) { ... on RelateFieldWrapper { listOptions { listItems { topId
+ *  value displayName } } } }`: Refused="R", Med on hold="H", PRN not needed="P", Absent="A",
+ *  Sleeping="S", Medication unavailable="M", Other="O". The map below stores those codes directly. */
 const REASON_TO_EXCEPTION: Record<string, string> = {
-  'Said no, will re-offer': 'Refused',
-  Asleep: 'Sleeping',
-  'Spit out': 'Refused',
-  Nausea: 'Refused',
-  'Outside hold parameters': 'Med on hold',
-  'Nurse instruction': 'Med on hold',
-  'Out of stock': 'Medication unavailable',
-  'Resident away': 'Absent',
-  Other: 'Other',
+  'Said no, will re-offer': 'R', // Refused
+  Asleep: 'S', // Sleeping
+  'Spit out': 'R', // Refused
+  Nausea: 'R', // Refused
+  'Outside hold parameters': 'H', // Med on hold
+  'Nurse instruction': 'H', // Med on hold
+  'Out of stock': 'M', // Medication unavailable
+  'Resident away': 'A', // Absent
+  Other: 'O', // Other
 }
 
 export function mapReasonToExceptionOption(reason: string): string {
-  return REASON_TO_EXCEPTION[reason] ?? 'Other'
+  return REASON_TO_EXCEPTION[reason] ?? 'O' // Other
 }
 
 /**
