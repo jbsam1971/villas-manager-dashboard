@@ -72,9 +72,17 @@ const FIELD_IDS = [
   FIELD_RECORD_VITALS,
 ]
 
+// The MAR form has 174,000+ total rows across every past and future day (confirmed live) — far too
+// many to page through and filter client-side (an earlier version of this query did exactly that
+// with a flat count:500 and silently found zero rows for today, since today's ~70 rows are a tiny
+// fraction of the total and aren't guaranteed to be anywhere near the front of an unfiltered
+// result). Filter server-side on Creation Date instead, confirmed live: `QueryFilterInput.value`
+// wants `MM/DD/YYYY` (matches the bluestep-reference date-format.md gotcha for addSearch; `YYYY/MM/DD`
+// silently fails here too, untested but assumed consistent) and a `>=` / `<` pair across midnight
+// boundaries correctly narrows to exactly one day (confirmed: 68 rows for 11/25/2026 vs 174,679 total).
 const MAR_QUERY = `
-  query($formId: String!, $unitId: String, $fields: [String!]) {
-    formEntries(formId: $formId, unitId: $unitId, count: 500) {
+  query($formId: String!, $unitId: String, $fields: [String!], $filter: [QueryFilterInput!]) {
+    formEntries(formId: $formId, unitId: $unitId, count: 500, filter: $filter) {
       size
       totalSize
       rows {
@@ -89,6 +97,13 @@ const MAR_QUERY = `
     }
   }
 `
+
+/** `MM/DD/YYYY`, zero-padded — the exact format `QueryFilterInput.value` requires for a DATE field (confirmed live). */
+function formatDateForFilter(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${mm}/${dd}/${date.getFullYear()}`
+}
 
 interface MarRow {
   formEntry: {
@@ -309,13 +324,22 @@ export async function fetchTodaysMedPass(): Promise<TodaysMedPassResult> {
     })
   })
 
+  const now = new Date()
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+
   const marData = await gql<MarQueryResponse>(MAR_QUERY, {
     formId: MAR_FORM_ID,
     unitId: DEMO_UNIT_ID,
     fields: FIELD_IDS,
+    filter: [
+      { fieldId: FIELD_CREATION_DATE, operation: '>=', value: formatDateForFilter(now) },
+      { fieldId: FIELD_CREATION_DATE, operation: '<', value: formatDateForFilter(tomorrow) },
+    ],
   })
 
-  const now = new Date()
+  // The server-side filter above already narrows to today — isSameLocalDay here is a cheap
+  // defensive double-check (e.g. against a filter edge case at a day boundary), not the primary
+  // mechanism; it never has to page through the form's other 174,000+ rows to do it.
   const todaysRows = marData.formEntries.rows.filter((row) => {
     const creationDate = getField(row.formEntry.data, 'Creation Date')?.value
     if (!isSameLocalDay(creationDate, now)) return false
