@@ -796,6 +796,30 @@
   color: var(--db-text-muted);
 }
 
+/* ---------- Real-save status (chartDose() in flight / failed) ---------- */
+
+.emar-med-saving {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--db-text-secondary);
+}
+
+.emar-med-save-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--db-status-error-soft);
+}
+
+.emar-med-save-error-text {
+  margin: 0;
+  font-size: 12px;
+  color: var(--db-status-error-ink);
+}
+
 /* ---------- Electronic signature block (med/PRN card) ---------- */
 
 .emar-signature-block {

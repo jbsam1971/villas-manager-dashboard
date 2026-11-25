@@ -3,9 +3,13 @@
 // Per bluestep-reference's git-site-spa.md, a Git Site's data surface is
 // same-origin at runtime: a session-authenticated GraphQL API at `/gql`
 // (cookie auth), with the CSRF token read from the `B6P-CSRF-TOKEN` response
-// header of a request to `/csrf-token`. This project is read-only in v1 (no
-// mutations — see requirements.md's Out of scope), but every call still
-// carries the CSRF header so a future mutation can reuse `gql()` unchanged.
+// header of a request to `/csrf-token`. This project was read-only through
+// v1 (see requirements.md's original Out of scope note); that's no longer
+// true — src/lib/emarData.ts's `chartMarRow`/`chartDose` call a real
+// `updateFormRow` mutation through this same `gql()` function (a mutation is
+// just a POST whose query string uses the `mutation` keyword instead of
+// `query` — there's no separate call path). Every call still carries the
+// CSRF header, now exercised by that real mutation rather than only queries.
 
 interface GqlErrorEntry {
   message: string
