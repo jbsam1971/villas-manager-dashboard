@@ -405,27 +405,33 @@ export async function fetchTodaysMedPass(): Promise<TodaysMedPassResult> {
  *   - "Resident away"           -> "Absent" (exact real option)
  *   - "Other" (either kind)     -> "Other"
  *
- *  IMPORTANT: a SINGLE_OPTION_LIST field is NOT written with its display label — confirmed live
- *  the hard way: writing the plain label "Refused" was silently ignored (the mutation reported
- *  success and Date/Time Administered/Notes saved, but Exception stayed null — no error surfaced,
- *  so this is easy to miss). The real write value is the option's short EXPORT CODE, found via
- *  `remoteObjects(ids: [fieldId]) { ... on RelateFieldWrapper { listOptions { listItems { topId
- *  value displayName } } } }`: Refused="R", Med on hold="H", PRN not needed="P", Absent="A",
- *  Sleeping="S", Medication unavailable="M", Other="O". The map below stores those codes directly. */
+ *  IMPORTANT: a SINGLE_OPTION_LIST field is NOT written with its display label, NOR with its short
+ *  export code — both confirmed live the hard way: writing "Refused" (label) and then "R" (export
+ *  code) were each silently ignored in turn (the mutation reported success and Date/Time
+ *  Administered/Notes saved both times, but Exception stayed null — no error surfaced either time,
+ *  so this is very easy to miss). The real write value is the option's own TOPID, the same
+ *  convention `RelationshipField.set()` uses elsewhere on this platform (target topId, not a label
+ *  or a Record id). Confirmed live by filtering existing historical rows for `Exception = "R"`
+ *  (the filter DOES accept the export code, even though a write doesn't) and reading back their
+ *  real `value`: `{topId: "1000013___349043", displayName: "Refused"}` — so topId
+ *  "1000013___349043" is what a write needs, not "R" or "Refused". Topids below came from that
+ *  same `remoteObjects(ids: [fieldId]) { ... on RelateFieldWrapper { listOptions { listItems {
+ *  topId value displayName } } } }` query, cross-checked against the one historical example found
+ *  (Refused's topid matches exactly). */
 const REASON_TO_EXCEPTION: Record<string, string> = {
-  'Said no, will re-offer': 'R', // Refused
-  Asleep: 'S', // Sleeping
-  'Spit out': 'R', // Refused
-  Nausea: 'R', // Refused
-  'Outside hold parameters': 'H', // Med on hold
-  'Nurse instruction': 'H', // Med on hold
-  'Out of stock': 'M', // Medication unavailable
-  'Resident away': 'A', // Absent
-  Other: 'O', // Other
+  'Said no, will re-offer': '1000013___349043', // Refused
+  Asleep: '1000013___349044', // Sleeping
+  'Spit out': '1000013___349043', // Refused
+  Nausea: '1000013___349043', // Refused
+  'Outside hold parameters': '1000013___399495', // Med on hold
+  'Nurse instruction': '1000013___399495', // Med on hold
+  'Out of stock': '1000013___349482', // Medication unavailable
+  'Resident away': '1000013___349045', // Absent
+  Other: '1000013___349042', // Other
 }
 
 export function mapReasonToExceptionOption(reason: string): string {
-  return REASON_TO_EXCEPTION[reason] ?? 'O' // Other
+  return REASON_TO_EXCEPTION[reason] ?? '1000013___349042' // Other
 }
 
 /**
